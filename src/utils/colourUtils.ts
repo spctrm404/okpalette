@@ -187,7 +187,7 @@ export const createPalette = ({
         sRgbOklch,
         sRgb,
         sRgbHex,
-        gamut: isSRgb ? 'sRGB' : isDispP3 ? 'Display P3' : 'Out of Display P3',
+        gamut: isSRgb ? 'sRGB' : 'Display P3',
       });
     }
   }
@@ -2032,8 +2032,8 @@ export const createApcaMatrix = (
     swatches.forEach((fg) => {
       column.push(
         calculateApcaScore(
-          colorspace == 'DISPLAY_P3' ? bg.dispP3 : bg.sRgb,
           colorspace == 'DISPLAY_P3' ? fg.dispP3 : fg.sRgb,
+          colorspace == 'DISPLAY_P3' ? bg.dispP3 : bg.sRgb,
           colorspace
         )
       );

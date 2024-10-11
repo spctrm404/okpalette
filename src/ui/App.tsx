@@ -1,4 +1,4 @@
-import { FigmaDocumentColorSpace } from '../types/figmaTypes';
+import { FigmaMessage, FigmaDocumentColorSpace } from '../types/figmaTypes';
 import { XY } from '../types/commonTypes';
 import { Hues, PaletteParam } from '../types/paletteTypes';
 import {
@@ -80,10 +80,7 @@ type Action =
     }
   | {
       type: 'setHues';
-      payload: {
-        from: number;
-        to: number;
-      };
+      payload: Hues;
     }
   | {
       type: 'setHue';
@@ -151,11 +148,12 @@ function App() {
     isHueRanged: false,
     hues: { from: 0, to: 0 },
     showDetail: true,
-    createApcaTable: false,
+    createApcaTable: true,
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [documentColorSpace] = useState<FigmaDocumentColorSpace>('LEGACY');
+  const [documentColorSpace, setDocumentColorSpace] =
+    useState<FigmaDocumentColorSpace>('LEGACY');
 
   const sendMsg = () => {
     console.log('state', state);
@@ -165,9 +163,9 @@ function App() {
       parent.postMessage(
         {
           pluginMessage: {
-            type: 'create-matrix',
-            apcaMatrix,
-          },
+            type: 'create-apca-matrix',
+            data: { apcaMatrix: apcaMatrix },
+          } as FigmaMessage,
         },
         '*'
       );
@@ -176,8 +174,8 @@ function App() {
         {
           pluginMessage: {
             type: 'create-palette',
-            palette,
-          },
+            data: { palette: palette },
+          } as FigmaMessage,
         },
         '*'
       );
@@ -236,36 +234,36 @@ function App() {
     });
   }, []);
 
-  // useLayoutEffect(() => {
-  //   const messageHandler = (event: MessageEvent) => {
-  //     const { type, ...msg } = event.data.pluginMessage;
+  useLayoutEffect(() => {
+    const messageHandler = (event: MessageEvent) => {
+      const { type, data } = event.data.pluginMessage;
 
-  //     if (type === 'colorSpace') {
-  //       setDocumentColorSpace(msg.colorSpace);
-  //     } else if (type === 'size') {
-  //       const root = document.documentElement;
-  //       root.style.setProperty('--width', `${msg.width}`);
-  //       root.style.setProperty('--height', `${msg.height}`);
-  //       root.style.setProperty('--px', `${msg.px}`);
-  //     }
-  //   };
-  //   window.addEventListener('message', messageHandler);
+      if (type === 'colorSpace') {
+        setDocumentColorSpace(data.colorSpace);
+      } else if (type === 'size') {
+        const root = document.documentElement;
+        root.style.setProperty('--width', `${data.width}`);
+        root.style.setProperty('--height', `${data.height}`);
+        root.style.setProperty('--px', `${data.px}`);
+      }
+    };
+    window.addEventListener('message', messageHandler);
 
-  //   return () => window.removeEventListener('message', messageHandler);
-  // }, []);
-  // useLayoutEffect(() => {
-  //   if (!state.isHueRanged)
-  //     dispatch({
-  //       type: 'setHue',
-  //       payload: {
-  //         field: 'to',
-  //         value: state.hues.from,
-  //       },
-  //     });
-  // }, [state.isHueRanged, state.hues.from]);
-  // useLayoutEffect(() => {
-  //   setHues?.(state.hues);
-  // }, [state.hues]);
+    return () => window.removeEventListener('message', messageHandler);
+  }, []);
+  useLayoutEffect(() => {
+    if (!state.isHueRanged)
+      dispatch({
+        type: 'setHue',
+        payload: {
+          field: 'to',
+          value: state.hues.from,
+        },
+      });
+  }, [state.isHueRanged, state.hues.from]);
+  useLayoutEffect(() => {
+    setHues?.(state.hues);
+  }, [state.hues]);
 
   const hueRangedId = useId();
   const hueFromId = useId();
@@ -277,7 +275,7 @@ function App() {
 
   return (
     <>
-      {/* <div className={cx('section', 'doc-color')}>
+      <div className={cx('section', 'doc-color')}>
         <div className={cx('label', 'doc-color__label')}>
           Document's Color Space:
         </div>
@@ -491,7 +489,7 @@ function App() {
           />
         </div>
       </div>
-      <div className={cx('divider')}></div> */}
+      <div className={cx('divider')}></div>
       <div className={cx('section', 'button')}>
         <div className={cx('part', 'button__part')}>
           {/* <IconButton
