@@ -21,13 +21,13 @@ const PALETTE_GY = 24;
 const SWATCH_W = 128;
 const SWATCH_H = 128;
 const INFO_PX = 8;
-const INFO_PY = 6;
-const INFO_GY = 4;
+const INFO_PY = 8;
+const INFO_GY = 8;
 const INFO_FONTSIZE = 10;
 const INFO_LINEHEIGHT = 12;
 const IDX_FONTSIZE = 56;
 const IDX_OFFSET_X = 12;
-const IDX_OFFSET_Y = 20;
+const IDX_OFFSET_Y = 12;
 
 const fontNames = [
   { family: 'Roboto Mono', style: 'Regular' },
@@ -115,6 +115,7 @@ const createPalette = (palette: Palette) => {
     lightnessText.fontSize = IDX_FONTSIZE;
     lightnessText.lineHeight = { value: IDX_FONTSIZE, unit: 'PIXELS' };
     lightnessText.characters = `${idx * palette.swatchStep}`;
+    lightnessText.leadingTrim = 'CAP_HEIGHT';
     lightnessText.layoutPositioning = 'ABSOLUTE';
     lightnessText.x = SWATCH_W - lightnessText.width + IDX_OFFSET_X;
     lightnessText.y = SWATCH_H - lightnessText.height + IDX_OFFSET_Y;
@@ -163,6 +164,7 @@ const createPalette = (palette: Palette) => {
         textNode.fontName = fontNames[0];
         textNode.fontSize = INFO_FONTSIZE;
         textNode.lineHeight = { value: INFO_LINEHEIGHT, unit: 'PIXELS' };
+        textNode.leadingTrim = 'CAP_HEIGHT';
         textNode.fills = [
           {
             type: 'SOLID',
@@ -270,20 +272,28 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
                   },
                 },
               ];
-        if (anApcaContrast > -15 && anApcaContrast < 15)
+        if (anApcaContrast > -15 && anApcaContrast < 15) {
+          elementFrame.bottomLeftRadius = 1 * Math.min(SWATCH_W, SWATCH_H);
+          elementFrame.topRightRadius = 1 * Math.min(SWATCH_W, SWATCH_H);
+        } else if (anApcaContrast > -30 && anApcaContrast < 30) {
           elementFrame.bottomLeftRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
-        if (anApcaContrast > -30 && anApcaContrast < 30)
-          elementFrame.bottomRightRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
+          elementFrame.topRightRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
+        }
 
         const bgText = figma.createText();
         elementFrame.appendChild(bgText);
-        bgText.name = 'fg';
+        bgText.name = 'bg';
         bgText.fontName = fontNames[0];
         bgText.fontSize = INFO_FONTSIZE;
         bgText.lineHeight = { value: INFO_FONTSIZE, unit: 'PIXELS' };
         bgText.characters = `${columnIdx * palette.swatchStep}`;
+        bgText.leadingTrim = 'CAP_HEIGHT';
         bgText.x = INFO_PX;
         bgText.y = INFO_PY;
+        bgText.constraints = {
+          horizontal: 'MIN',
+          vertical: 'MIN',
+        };
         bgText.fills = [
           {
             type: 'SOLID',
@@ -296,13 +306,18 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
 
         const fgText = figma.createText();
         elementFrame.appendChild(fgText);
-        fgText.name = 'bg';
+        fgText.name = 'fg';
         fgText.fontName = fontNames[0];
         fgText.fontSize = INFO_FONTSIZE;
         fgText.lineHeight = { value: INFO_FONTSIZE, unit: 'PIXELS' };
         fgText.characters = `${rowIdx * palette.swatchStep}`;
+        fgText.leadingTrim = 'CAP_HEIGHT';
         fgText.x = SWATCH_W - fgText.width - INFO_PX;
-        fgText.y = INFO_PY;
+        fgText.y = SWATCH_H - fgText.height - INFO_PY;
+        fgText.constraints = {
+          horizontal: 'MAX',
+          vertical: 'MAX',
+        };
         fgText.fills = [
           {
             type: 'SOLID',
@@ -320,8 +335,13 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
         lightnessText.fontSize = IDX_FONTSIZE;
         lightnessText.lineHeight = { value: IDX_FONTSIZE, unit: 'PIXELS' };
         lightnessText.characters = `${Math.abs(anApcaContrast)}`;
+        lightnessText.leadingTrim = 'CAP_HEIGHT';
         lightnessText.x = SWATCH_W * 0.5 - lightnessText.width * 0.5;
         lightnessText.y = SWATCH_H * 0.5 - lightnessText.height * 0.5;
+        lightnessText.constraints = {
+          horizontal: 'CENTER',
+          vertical: 'CENTER',
+        };
         lightnessText.fills =
           colorSpace === 'DISPLAY_P3'
             ? [
