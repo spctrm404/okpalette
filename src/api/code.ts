@@ -239,73 +239,112 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
 
   matrix.forEach((aColumn, columnIdx) => {
     aColumn.forEach((anApcaContrast, rowIdx) => {
-      const elementFrame = figma.createFrame();
-      matrixFrame.appendChild(elementFrame);
-      elementFrame.name = `bg-${columnIdx * palette.swatchStep}_fg-${
-        rowIdx * palette.swatchStep
-      }_${Math.abs(anApcaContrast)}`;
-      elementFrame.layoutMode = 'VERTICAL';
-      elementFrame.layoutSizingHorizontal = 'FIXED';
-      elementFrame.layoutSizingVertical = 'FIXED';
-      elementFrame.x = PALETTE_PX + columnIdx * (SWATCH_W + PALETTE_GX);
-      elementFrame.y = PALETTE_PY + rowIdx * (SWATCH_H + PALETTE_GY);
-      elementFrame.resize(SWATCH_W, SWATCH_H);
-      elementFrame.fills =
-        colorSpace === 'DISPLAY_P3'
-          ? [
-              {
-                type: 'SOLID',
-                color: {
-                  r: palette.swatches[columnIdx].dispP3.r,
-                  g: palette.swatches[columnIdx].dispP3.g,
-                  b: palette.swatches[columnIdx].dispP3.b,
+      if (columnIdx !== rowIdx) {
+        const elementFrame = figma.createFrame();
+        matrixFrame.appendChild(elementFrame);
+        elementFrame.name = `bg-${columnIdx * palette.swatchStep}_fg-${
+          rowIdx * palette.swatchStep
+        }_${Math.abs(anApcaContrast)}`;
+        elementFrame.x = PALETTE_PX + columnIdx * (SWATCH_W + PALETTE_GX);
+        elementFrame.y = PALETTE_PY + rowIdx * (SWATCH_H + PALETTE_GY);
+        elementFrame.resize(SWATCH_W, SWATCH_H);
+        elementFrame.fills =
+          colorSpace === 'DISPLAY_P3'
+            ? [
+                {
+                  type: 'SOLID',
+                  color: {
+                    r: palette.swatches[columnIdx].dispP3.r,
+                    g: palette.swatches[columnIdx].dispP3.g,
+                    b: palette.swatches[columnIdx].dispP3.b,
+                  },
                 },
-              },
-            ]
-          : [
-              {
-                type: 'SOLID',
-                color: {
-                  r: palette.swatches[columnIdx].sRgb.r,
-                  g: palette.swatches[columnIdx].sRgb.g,
-                  b: palette.swatches[columnIdx].sRgb.b,
+              ]
+            : [
+                {
+                  type: 'SOLID',
+                  color: {
+                    r: palette.swatches[columnIdx].sRgb.r,
+                    g: palette.swatches[columnIdx].sRgb.g,
+                    b: palette.swatches[columnIdx].sRgb.b,
+                  },
                 },
-              },
-            ];
-      if (anApcaContrast < 30 && anApcaContrast > -30)
-        elementFrame.opacity = 0.05;
-      const lightnessText = figma.createText();
-      elementFrame.appendChild(lightnessText);
-      lightnessText.name = 'APCA Contrast';
-      lightnessText.fontName = fontNames[1];
-      lightnessText.fontSize = IDX_FONTSIZE;
-      lightnessText.lineHeight = { value: IDX_FONTSIZE, unit: 'PIXELS' };
-      lightnessText.characters = `${Math.abs(anApcaContrast)}`;
-      lightnessText.layoutPositioning = 'ABSOLUTE';
-      lightnessText.x = SWATCH_W * 0.5 - lightnessText.width * 0.5;
-      lightnessText.y = SWATCH_H * 0.5 - lightnessText.height * 0.5;
-      lightnessText.fills =
-        colorSpace === 'DISPLAY_P3'
-          ? [
-              {
-                type: 'SOLID',
-                color: {
-                  r: palette.swatches[rowIdx].dispP3.r,
-                  g: palette.swatches[rowIdx].dispP3.g,
-                  b: palette.swatches[rowIdx].dispP3.b,
+              ];
+        if (anApcaContrast > -15 && anApcaContrast < 15)
+          elementFrame.bottomLeftRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
+        if (anApcaContrast > -30 && anApcaContrast < 30)
+          elementFrame.bottomRightRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
+
+        const bgText = figma.createText();
+        elementFrame.appendChild(bgText);
+        bgText.name = 'fg';
+        bgText.fontName = fontNames[0];
+        bgText.fontSize = INFO_FONTSIZE;
+        bgText.lineHeight = { value: INFO_FONTSIZE, unit: 'PIXELS' };
+        bgText.characters = `${columnIdx * palette.swatchStep}`;
+        bgText.x = INFO_PX;
+        bgText.y = INFO_PY;
+        bgText.fills = [
+          {
+            type: 'SOLID',
+            color:
+              columnIdx < palette.swatches.length / 2
+                ? { r: 1, g: 1, b: 1 }
+                : { r: 0, g: 0, b: 0 },
+          },
+        ];
+
+        const fgText = figma.createText();
+        elementFrame.appendChild(fgText);
+        fgText.name = 'bg';
+        fgText.fontName = fontNames[0];
+        fgText.fontSize = INFO_FONTSIZE;
+        fgText.lineHeight = { value: INFO_FONTSIZE, unit: 'PIXELS' };
+        fgText.characters = `${rowIdx * palette.swatchStep}`;
+        fgText.x = SWATCH_W - fgText.width - INFO_PX;
+        fgText.y = INFO_PY;
+        fgText.fills = [
+          {
+            type: 'SOLID',
+            color:
+              columnIdx < palette.swatches.length / 2
+                ? { r: 1, g: 1, b: 1 }
+                : { r: 0, g: 0, b: 0 },
+          },
+        ];
+
+        const lightnessText = figma.createText();
+        elementFrame.appendChild(lightnessText);
+        lightnessText.name = 'APCA Contrast';
+        lightnessText.fontName = fontNames[1];
+        lightnessText.fontSize = IDX_FONTSIZE;
+        lightnessText.lineHeight = { value: IDX_FONTSIZE, unit: 'PIXELS' };
+        lightnessText.characters = `${Math.abs(anApcaContrast)}`;
+        lightnessText.x = SWATCH_W * 0.5 - lightnessText.width * 0.5;
+        lightnessText.y = SWATCH_H * 0.5 - lightnessText.height * 0.5;
+        lightnessText.fills =
+          colorSpace === 'DISPLAY_P3'
+            ? [
+                {
+                  type: 'SOLID',
+                  color: {
+                    r: palette.swatches[rowIdx].dispP3.r,
+                    g: palette.swatches[rowIdx].dispP3.g,
+                    b: palette.swatches[rowIdx].dispP3.b,
+                  },
                 },
-              },
-            ]
-          : [
-              {
-                type: 'SOLID',
-                color: {
-                  r: palette.swatches[rowIdx].sRgb.r,
-                  g: palette.swatches[rowIdx].sRgb.g,
-                  b: palette.swatches[rowIdx].sRgb.b,
+              ]
+            : [
+                {
+                  type: 'SOLID',
+                  color: {
+                    r: palette.swatches[rowIdx].sRgb.r,
+                    g: palette.swatches[rowIdx].sRgb.g,
+                    b: palette.swatches[rowIdx].sRgb.b,
+                  },
                 },
-              },
-            ];
+              ];
+      }
     });
   });
 
