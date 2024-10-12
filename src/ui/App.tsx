@@ -1,5 +1,5 @@
 import { FigmaMessage, FigmaDocumentColorSpace } from '../types/figmaTypes';
-import { XY } from '../types/commonTypes';
+import { Matrix, XY } from '../types/commonTypes';
 import { Hues, PaletteParam } from '../types/paletteTypes';
 import {
   LIGHTNESS_STEP,

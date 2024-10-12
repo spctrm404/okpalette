@@ -1,14 +1,15 @@
-/// <reference types="@figma/plugin-typings" />
-
-import { FigmaMessage } from '../types/figmaTypes';
+import { Matrix } from '../types/commonTypes';
 import { Palette, ApcaMatrix } from '../types/paletteTypes';
+import { FigmaMessage } from '../types/figmaTypes';
+
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
   HUE_STEP,
   RGB_FLOAT_PRECISION,
 } from '../constants';
-import { quantize } from '../utils/numberUtils';
+
+import { formatDigits, formatQuantize } from '../utils/stringUtils';
 
 const PX = 12;
 const WIDTH = 250;
@@ -51,14 +52,17 @@ figma.ui.postMessage(<FigmaMessage>{
 });
 
 const createPalette = (palette: Palette) => {
+  // paletteFrame
   const paletteFrame = figma.createFrame();
-  paletteFrame.name = `OKP_step${palette.swatchStep}_l${quantize(
+  paletteFrame.name = `OKP_step${palette.swatchStep}_l${formatDigits(
     100 * palette.peakLightness,
-    1
-  )}_c${quantize(100 * palette.peakChroma, 0.1)}_h${quantize(
+    3,
+    0
+  )}_c${formatDigits(100 * palette.peakChroma, 2, 1)}_h${formatDigits(
     palette.hues.from,
-    1
-  )}-${quantize(palette.hues.to, 1)}`;
+    1,
+    0
+  )}-${formatDigits(palette.hues.to, 1, 0)}`;
   const { x: centerX, y: centerY } = figma.viewport.center;
   paletteFrame.x = Math.floor(centerX);
   paletteFrame.y = Math.floor(centerY);
@@ -74,7 +78,7 @@ const createPalette = (palette: Palette) => {
       color: { r: 1, g: 1, b: 1 },
     },
   ];
-
+  // swatchFrame
   palette.swatches.forEach((aSwatch, idx) => {
     const swatchFrame = figma.createFrame();
     paletteFrame.appendChild(swatchFrame);
@@ -107,7 +111,7 @@ const createPalette = (palette: Palette) => {
               },
             },
           ];
-
+    // lightnessText
     const lightnessText = figma.createText();
     swatchFrame.appendChild(lightnessText);
     lightnessText.name = '#';
@@ -132,7 +136,7 @@ const createPalette = (palette: Palette) => {
             : { r: 0, g: 0, b: 0 },
       },
     ];
-
+    // infoFrame
     const infoFrame = figma.createFrame();
     swatchFrame.appendChild(infoFrame);
     infoFrame.name = 'info';
@@ -145,7 +149,7 @@ const createPalette = (palette: Palette) => {
     infoFrame.paddingRight = INFO_PX;
     infoFrame.itemSpacing = INFO_GY;
     infoFrame.fills = [];
-
+    // infoFrame.children
     const okLChText = figma.createText();
     infoFrame.appendChild(okLChText);
     let p3RGBText;
@@ -157,7 +161,6 @@ const createPalette = (palette: Palette) => {
     infoFrame.appendChild(hexText);
     const gamutText = figma.createText();
     infoFrame.appendChild(gamutText);
-
     infoFrame.children.forEach((child) => {
       if (child.type === 'TEXT') {
         const textNode = child as TextNode;
@@ -176,34 +179,39 @@ const createPalette = (palette: Palette) => {
         ];
       }
     });
-
+    // okLChText
     okLChText.name = 'oklch';
     okLChText.characters =
       colorSpace === 'DISPLAY_P3'
-        ? `oklch(${quantize(aSwatch.dispP3Oklch.l, LIGHTNESS_STEP)} ${quantize(
+        ? `oklch(${formatQuantize(
+            aSwatch.dispP3Oklch.l,
+            LIGHTNESS_STEP
+          )} ${formatQuantize(
             aSwatch.dispP3Oklch.c,
             CHROMA_STEP
-          )} ${quantize(aSwatch.dispP3Oklch.h, HUE_STEP)})`
-        : `oklch(${quantize(aSwatch.sRgbOklch.l, LIGHTNESS_STEP)} ${quantize(
+          )} ${formatQuantize(aSwatch.dispP3Oklch.h, HUE_STEP)})`
+        : `oklch(${formatQuantize(
+            aSwatch.sRgbOklch.l,
+            LIGHTNESS_STEP
+          )} ${formatQuantize(
             aSwatch.sRgbOklch.c,
             CHROMA_STEP
-          )} ${quantize(aSwatch.sRgbOklch.h, HUE_STEP)})`;
-
+          )} ${formatQuantize(aSwatch.sRgbOklch.h, HUE_STEP)})`;
     if (colorSpace === 'DISPLAY_P3' && p3RGBText) {
       p3RGBText.name = 'displayP3-rgb';
       p3RGBText.fontName = fontNames[0];
       p3RGBText.characters = `color(display-p3
-${quantize(aSwatch.dispP3.r, RGB_FLOAT_PRECISION)}
-${quantize(aSwatch.dispP3.g, RGB_FLOAT_PRECISION)}
-${quantize(aSwatch.dispP3.b, RGB_FLOAT_PRECISION)}
+${formatDigits(aSwatch.dispP3.r, 1, 6)}
+${formatDigits(aSwatch.dispP3.g, 1, 6)}
+${formatDigits(aSwatch.dispP3.b, 1, 6)}
 )`;
     }
-
+    // hexText
     hexText.name = 'hex';
     hexText.characters = `#${
       colorSpace === 'DISPLAY_P3' ? aSwatch.dispP3Hex : aSwatch.sRgbHex
     }`;
-
+    // gamutText
     gamutText.name = 'gamut';
     gamutText.characters = aSwatch.gamut;
   });
@@ -212,15 +220,18 @@ ${quantize(aSwatch.dispP3.b, RGB_FLOAT_PRECISION)}
 
 const createMatrix = (apcaMatrix: ApcaMatrix) => {
   const palette = apcaMatrix.palette;
-  const matrix = apcaMatrix.matrix;
+  const matrix = Matrix.fromSerialized(apcaMatrix.matrix);
+  // matrixFrame
   const matrixFrame = figma.createFrame();
-  matrixFrame.name = `OKP-Matrix_step${palette.swatchStep}_l${quantize(
+  matrixFrame.name = `OKP-Matrix_step${palette.swatchStep}_l${formatDigits(
     100 * palette.peakLightness,
-    1
-  )}_c${quantize(100 * palette.peakChroma, 0.1)}_h${quantize(
+    3,
+    0
+  )}_c${formatDigits(100 * palette.peakChroma, 2, 1)}_h${formatDigits(
     palette.hues.from,
-    1
-  )}-${quantize(palette.hues.to, 1)}`;
+    1,
+    0
+  )}-${formatDigits(palette.hues.to, 1, 0)}`;
   const { x: centerX, y: centerY } = figma.viewport.center;
   matrixFrame.x = Math.floor(centerX);
   matrixFrame.y = Math.floor(centerY) + 2 * (2 * PALETTE_PY + SWATCH_H);
@@ -238,17 +249,21 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
       color: { r: 1, g: 1, b: 1 },
     },
   ];
-
-  matrix.forEach((aColumn, columnIdx) => {
-    aColumn.forEach((anApcaContrast, rowIdx) => {
-      if (columnIdx !== rowIdx) {
+  // elementFrame
+  for (let matrixY = 0; matrixY < matrix.getHeight(); matrixY++) {
+    for (let matrixX = 0; matrixX < matrix.getWidth(); matrixX++) {
+      if (matrixY !== matrixX) {
+        const anApcaContrast = matrix.getValueByCoord({
+          x: matrixX,
+          y: matrixY,
+        });
         const elementFrame = figma.createFrame();
         matrixFrame.appendChild(elementFrame);
-        elementFrame.name = `bg-${columnIdx * palette.swatchStep}_fg-${
-          rowIdx * palette.swatchStep
+        elementFrame.name = `bg-${matrixX * palette.swatchStep}_fg-${
+          matrixY * palette.swatchStep
         }_${Math.abs(anApcaContrast)}`;
-        elementFrame.x = PALETTE_PX + columnIdx * (SWATCH_W + PALETTE_GX);
-        elementFrame.y = PALETTE_PY + rowIdx * (SWATCH_H + PALETTE_GY);
+        elementFrame.x = PALETTE_PX + matrixX * (SWATCH_W + PALETTE_GX);
+        elementFrame.y = PALETTE_PY + matrixY * (SWATCH_H + PALETTE_GY);
         elementFrame.resize(SWATCH_W, SWATCH_H);
         elementFrame.fills =
           colorSpace === 'DISPLAY_P3'
@@ -256,9 +271,9 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
                 {
                   type: 'SOLID',
                   color: {
-                    r: palette.swatches[columnIdx].dispP3.r,
-                    g: palette.swatches[columnIdx].dispP3.g,
-                    b: palette.swatches[columnIdx].dispP3.b,
+                    r: palette.swatches[matrixX].dispP3.r,
+                    g: palette.swatches[matrixX].dispP3.g,
+                    b: palette.swatches[matrixX].dispP3.b,
                   },
                 },
               ]
@@ -266,9 +281,9 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
                 {
                   type: 'SOLID',
                   color: {
-                    r: palette.swatches[columnIdx].sRgb.r,
-                    g: palette.swatches[columnIdx].sRgb.g,
-                    b: palette.swatches[columnIdx].sRgb.b,
+                    r: palette.swatches[matrixX].sRgb.r,
+                    g: palette.swatches[matrixX].sRgb.g,
+                    b: palette.swatches[matrixX].sRgb.b,
                   },
                 },
               ];
@@ -279,14 +294,14 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
           elementFrame.bottomLeftRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
           elementFrame.topRightRadius = 0.5 * Math.min(SWATCH_W, SWATCH_H);
         }
-
+        // bgText
         const bgText = figma.createText();
         elementFrame.appendChild(bgText);
         bgText.name = 'bg';
         bgText.fontName = fontNames[0];
         bgText.fontSize = INFO_FONTSIZE;
         bgText.lineHeight = { value: INFO_FONTSIZE, unit: 'PIXELS' };
-        bgText.characters = `${columnIdx * palette.swatchStep}`;
+        bgText.characters = `${matrixX * palette.swatchStep}`;
         bgText.leadingTrim = 'CAP_HEIGHT';
         bgText.x = INFO_PX;
         bgText.y = INFO_PY;
@@ -298,19 +313,19 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
           {
             type: 'SOLID',
             color:
-              columnIdx < palette.swatches.length / 2
+              matrixX < palette.swatches.length / 2
                 ? { r: 1, g: 1, b: 1 }
                 : { r: 0, g: 0, b: 0 },
           },
         ];
-
+        // fgText
         const fgText = figma.createText();
         elementFrame.appendChild(fgText);
         fgText.name = 'fg';
         fgText.fontName = fontNames[0];
         fgText.fontSize = INFO_FONTSIZE;
         fgText.lineHeight = { value: INFO_FONTSIZE, unit: 'PIXELS' };
-        fgText.characters = `${rowIdx * palette.swatchStep}`;
+        fgText.characters = `${matrixY * palette.swatchStep}`;
         fgText.leadingTrim = 'CAP_HEIGHT';
         fgText.x = SWATCH_W - fgText.width - INFO_PX;
         fgText.y = SWATCH_H - fgText.height - INFO_PY;
@@ -322,12 +337,12 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
           {
             type: 'SOLID',
             color:
-              columnIdx < palette.swatches.length / 2
+              matrixX < palette.swatches.length / 2
                 ? { r: 1, g: 1, b: 1 }
                 : { r: 0, g: 0, b: 0 },
           },
         ];
-
+        // lightnessText
         const lightnessText = figma.createText();
         elementFrame.appendChild(lightnessText);
         lightnessText.name = 'APCA Contrast';
@@ -348,9 +363,9 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
                 {
                   type: 'SOLID',
                   color: {
-                    r: palette.swatches[rowIdx].dispP3.r,
-                    g: palette.swatches[rowIdx].dispP3.g,
-                    b: palette.swatches[rowIdx].dispP3.b,
+                    r: palette.swatches[matrixY].dispP3.r,
+                    g: palette.swatches[matrixY].dispP3.g,
+                    b: palette.swatches[matrixY].dispP3.b,
                   },
                 },
               ]
@@ -358,16 +373,15 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
                 {
                   type: 'SOLID',
                   color: {
-                    r: palette.swatches[rowIdx].sRgb.r,
-                    g: palette.swatches[rowIdx].sRgb.g,
-                    b: palette.swatches[rowIdx].sRgb.b,
+                    r: palette.swatches[matrixY].sRgb.r,
+                    g: palette.swatches[matrixY].sRgb.g,
+                    b: palette.swatches[matrixY].sRgb.b,
                   },
                 },
               ];
       }
-    });
-  });
-
+    }
+  }
   return matrixFrame;
 };
 
@@ -377,14 +391,11 @@ figma.ui.onmessage = ({ type, data }: FigmaMessage) => {
       .then(() => {
         const apcaMatrix = data.apcaMatrix as ApcaMatrix;
         const palette = apcaMatrix.palette;
-
         const nodes: SceneNode[] = [];
-
         const paletteFrame = createPalette(palette);
         figma.currentPage.appendChild(paletteFrame);
         const matrixFrame = createMatrix(apcaMatrix);
         figma.currentPage.appendChild(matrixFrame);
-
         nodes.push(paletteFrame);
       })
       .catch((err) => {
@@ -392,119 +403,3 @@ figma.ui.onmessage = ({ type, data }: FigmaMessage) => {
       });
   }
 };
-
-// figma.ui.onmessage = async (msg: MsgType) => {
-//   if (msg.type === 'create-palette' && 'palette' in msg) {
-//     await ensureFontLoaded();
-
-//   } else if (msg.type === 'create-matrix' && 'apcaMatrix' in msg) {
-//     console.log('MATRIX');
-//     await ensureFontLoaded();
-//     const apcaMatrix = msg.apcaMatrix;
-//     const palette = apcaMatrix.palette;
-//     const matrix = apcaMatrix.matrix;
-//   }
-// };
-
-//     const nodes: SceneNode[] = [];
-//     const paletteFrame = figma.createFrame();
-//     paletteFrame.name = `OKP-matrix-step${palette.swatchStep}_l${quantize(
-//       100 * palette.peakLightness,
-//       1
-//     )}_c${quantize(100 * palette.peakChroma, 0.1)}_h${quantize(
-//       palette.hues.from,
-//       1
-//     )}-${quantize(palette.hues.to, 1)}`;
-//     const { x: centerX, y: centerY } = figma.viewport.center;
-//     paletteFrame.x = centerX + SWATCH_H + 2 * PALETTE_PY;
-//     paletteFrame.y = centerY;
-//     paletteFrame.resize(
-//       2 * PALETTE_PX +
-//         (100 / palette.swatchStep + 1) * SWATCH_W +
-//         (100 / palette.swatchStep) * PALETTE_GX,
-//       2 * PALETTE_PY +
-//         +(100 / palette.swatchStep + 1) * SWATCH_H +
-//         (100 / palette.swatchStep) * PALETTE_GY
-//     );
-//     paletteFrame.fills = [
-//       {
-//         type: 'SOLID',
-//         color: { r: 1, g: 1, b: 1 },
-//       },
-//     ];
-
-//     matrix.forEach((bg, bgIdx) => {
-//       bg.forEach((fg, fgIdx) => {
-//         const swatchFrame = figma.createFrame();
-//         paletteFrame.appendChild(swatchFrame);
-//         swatchFrame.name = `bg-${bgIdx * palette.swatchStep}_fg-${
-//           fgIdx * palette.swatchStep
-//         }`;
-//         swatchFrame.layoutMode = 'VERTICAL';
-//         swatchFrame.layoutSizingHorizontal = 'FIXED';
-//         swatchFrame.layoutSizingVertical = 'FIXED';
-//         swatchFrame.x = PALETTE_PX + bgIdx * (SWATCH_W + PALETTE_GX);
-//         swatchFrame.y = PALETTE_PY + fgIdx * (SWATCH_H + PALETTE_GY);
-//         swatchFrame.resize(SWATCH_W, SWATCH_H);
-//         swatchFrame.fills =
-//           colorSpace === 'DISPLAY_P3'
-//             ? [
-//                 {
-//                   type: 'SOLID',
-//                   color: {
-//                     r: palette.swatches[bgIdx].dispP3.r,
-//                     g: palette.swatches[bgIdx].dispP3.g,
-//                     b: palette.swatches[bgIdx].dispP3.b,
-//                   },
-//                 },
-//               ]
-//             : [
-//                 {
-//                   type: 'SOLID',
-//                   color: {
-//                     r: palette.swatches[bgIdx].sRgb.r,
-//                     g: palette.swatches[bgIdx].sRgb.g,
-//                     b: palette.swatches[bgIdx].sRgb.b,
-//                   },
-//                 },
-//               ];
-//         if (fg < 30 && fg > -30) swatchFrame.opacity = 0;
-//         const lightnessText = figma.createText();
-//         swatchFrame.appendChild(lightnessText);
-//         lightnessText.name = 'APCA Contrast';
-//         lightnessText.fontName = { family: 'Roboto Condensed', style: 'Bold' };
-//         lightnessText.fontSize = IDX_FONTSIZE;
-//         lightnessText.lineHeight = { value: IDX_FONTSIZE, unit: 'PIXELS' };
-//         lightnessText.characters = `${fg}`;
-//         lightnessText.layoutPositioning = 'ABSOLUTE';
-//         lightnessText.x = SWATCH_W * 0.5 - lightnessText.width * 0.5;
-//         lightnessText.y = SWATCH_H * 0.5 - lightnessText.height * 0.5;
-//         lightnessText.fills =
-//           colorSpace === 'DISPLAY_P3'
-//             ? [
-//                 {
-//                   type: 'SOLID',
-//                   color: {
-//                     r: palette.swatches[fgIdx].dispP3.r,
-//                     g: palette.swatches[fgIdx].dispP3.g,
-//                     b: palette.swatches[fgIdx].dispP3.b,
-//                   },
-//                 },
-//               ]
-//             : [
-//                 {
-//                   type: 'SOLID',
-//                   color: {
-//                     r: palette.swatches[fgIdx].sRgb.r,
-//                     g: palette.swatches[fgIdx].sRgb.g,
-//                     b: palette.swatches[fgIdx].sRgb.b,
-//                   },
-//                 },
-//               ];
-//       });
-//     });
-
-//     figma.currentPage.appendChild(paletteFrame);
-//     nodes.push(paletteFrame);
-//   }
-// };

@@ -1,18 +1,18 @@
-export const formatNumDigits = (
+export const formatDigits = (
   num: number,
-  intLength: number,
-  floatLength: number
+  intLen: number,
+  floatLen: number
 ): string => {
-  const [intPart, floatPart] = num.toFixed(floatLength).split('.');
-  const paddedInt = intPart ? intPart.padStart(intLength, '0') : '0';
-  return `${intLength > 0 ? paddedInt : intLength < 0 ? intPart : ''}${
-    floatLength > 0 ? `.${floatPart}` : ''
+  const [intPart, floatPart] = num.toFixed(floatLen).split('.');
+  const paddedInt = intPart ? intPart.padStart(intLen, '0') : '0';
+  return `${intLen > 0 ? paddedInt : intLen < 0 ? intPart : ''}${
+    floatLen > 0 ? `.${floatPart}` : ''
   }`;
 };
 
-export const formatNumQuantize = (num: number, step: number): string => {
-  const floatLength = (step.toString().split('.')[1] || '').length;
-  return formatNumDigits(num, -1, floatLength);
+export const formatQuantize = (num: number, step: number): string => {
+  const floatLen = (step.toString().split('.')[1] || '').length;
+  return formatDigits(num, -1, floatLen);
 };
 
 export const camelCaseToKebabCase = (camelString: string): string => {

@@ -1,3 +1,4 @@
+import { Matrix } from './commonTypes';
 import { RGB, LCH } from './colourTypes';
 
 export type Hues = {
@@ -29,5 +30,5 @@ export type Palette = {
 
 export type ApcaMatrix = {
   palette: Palette;
-  matrix: number[][];
+  matrix: Matrix;
 };

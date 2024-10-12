@@ -19,7 +19,7 @@ export type TonalPaletteConfig = {
   };
 };
 
-export type ThemeContext = {
+export type ThemeContextValue = {
   theme: Theme;
   hues: Hues;
   setTheme?: React.Dispatch<React.SetStateAction<Theme>>;

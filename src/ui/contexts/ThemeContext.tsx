@@ -3,7 +3,7 @@ import {
   Theme,
   ThemeLightness,
   TonalPaletteConfig,
-  ThemeContext as ThemeContextType,
+  ThemeContextValue,
 } from './ThemeContextTypes';
 import {
   LIGHTNESS_STEP,
@@ -36,7 +36,7 @@ import {
   useState,
 } from 'react';
 
-export const ThemeContext = createContext<ThemeContextType>({
+export const ThemeContext = createContext<ThemeContextValue>({
   theme: 'light',
   hues: { from: 0, to: 0 },
 });
