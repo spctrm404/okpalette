@@ -5,14 +5,9 @@ export const formatDigits = (
 ): string => {
   const [intPart, floatPart] = num.toFixed(floatLen).split('.');
   const paddedInt = intPart ? intPart.padStart(intLen, '0') : '0';
-  return `${intLen > 0 ? paddedInt : intLen < 0 ? intPart : ''}${
+  return `${intLen > 0 ? paddedInt : intLen === 0 ? intPart : ''}${
     floatLen > 0 ? `.${floatPart}` : ''
   }`;
-};
-
-export const formatQuantize = (num: number, step: number): string => {
-  const floatLen = (step.toString().split('.')[1] || '').length;
-  return formatDigits(num, -1, floatLen);
 };
 
 export const camelCaseToKebabCase = (camelString: string): string => {

@@ -1,3 +1,5 @@
+// check constants and formatDigits
+
 import { Matrix } from '../types/commonTypes';
 import { Palette, ApcaMatrix } from '../types/paletteTypes';
 import { FigmaMessage } from '../types/figmaTypes';
@@ -9,7 +11,7 @@ import {
   RGB_FLOAT_PRECISION,
 } from '../constants';
 
-import { formatDigits, formatQuantize } from '../utils/stringUtils';
+import { formatDigits } from '../utils/stringUtils';
 
 const PX = 12;
 const WIDTH = 250;
@@ -183,20 +185,16 @@ const createPalette = (palette: Palette) => {
     okLChText.name = 'oklch';
     okLChText.characters =
       colorSpace === 'DISPLAY_P3'
-        ? `oklch(${formatQuantize(
-            aSwatch.dispP3Oklch.l,
-            LIGHTNESS_STEP
-          )} ${formatQuantize(
+        ? `oklch(${formatDigits(aSwatch.dispP3Oklch.l, -1, 2)} ${formatDigits(
             aSwatch.dispP3Oklch.c,
-            CHROMA_STEP
-          )} ${formatQuantize(aSwatch.dispP3Oklch.h, HUE_STEP)})`
-        : `oklch(${formatQuantize(
-            aSwatch.sRgbOklch.l,
-            LIGHTNESS_STEP
-          )} ${formatQuantize(
+            -1,
+            3
+          )} ${formatDigits(aSwatch.dispP3Oklch.h, 0, 0)})`
+        : `oklch(${formatDigits(aSwatch.sRgbOklch.l, -1, 2)} ${formatDigits(
             aSwatch.sRgbOklch.c,
-            CHROMA_STEP
-          )} ${formatQuantize(aSwatch.sRgbOklch.h, HUE_STEP)})`;
+            -1,
+            3
+          )} ${formatDigits(aSwatch.sRgbOklch.h, 0, 0)})`;
     if (colorSpace === 'DISPLAY_P3' && p3RGBText) {
       p3RGBText.name = 'displayP3-rgb';
       p3RGBText.fontName = fontNames[0];
