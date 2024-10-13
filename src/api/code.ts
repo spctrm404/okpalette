@@ -21,8 +21,8 @@ const PALETTE_PX = 24;
 const PALETTE_PY = 24;
 const PALETTE_GX = 24;
 const PALETTE_GY = 24;
-const SWATCH_W = 128;
-const SWATCH_H = 128;
+const SWATCH_W = 144;
+const SWATCH_H = 144;
 const INFO_PX = 8;
 const INFO_PY = 8;
 const INFO_GY = 8;
@@ -84,7 +84,7 @@ const createPalette = (palette: Palette) => {
   palette.swatches.forEach((aSwatch, idx) => {
     const swatchFrame = figma.createFrame();
     paletteFrame.appendChild(swatchFrame);
-    swatchFrame.name = `Swatch-${idx * palette.swatchStep}`;
+    swatchFrame.name = `swatch-${idx * palette.swatchStep}`;
     swatchFrame.layoutMode = 'VERTICAL';
     swatchFrame.layoutSizingHorizontal = 'FIXED';
     swatchFrame.layoutSizingVertical = 'FIXED';
@@ -161,6 +161,11 @@ const createPalette = (palette: Palette) => {
     }
     const hexText = figma.createText();
     infoFrame.appendChild(hexText);
+    let sRgbHexText;
+    if (colorSpace === 'DISPLAY_P3') {
+      sRgbHexText = figma.createText();
+      infoFrame.appendChild(sRgbHexText);
+    }
     const gamutText = figma.createText();
     infoFrame.appendChild(gamutText);
     infoFrame.children.forEach((child) => {
@@ -195,7 +200,7 @@ const createPalette = (palette: Palette) => {
             -1,
             3
           )} ${formatDigits(aSwatch.sRgbOklch.h, 0, 0)})`;
-    if (colorSpace === 'DISPLAY_P3' && p3RGBText) {
+    if (p3RGBText) {
       p3RGBText.name = 'displayP3-rgb';
       p3RGBText.fontName = fontNames[0];
       p3RGBText.characters = `color(display-p3
@@ -205,10 +210,15 @@ ${formatDigits(aSwatch.dispP3.b, 1, 6)}
 )`;
     }
     // hexText
-    hexText.name = 'hex';
+    hexText.name = `${colorSpace === 'DISPLAY_P3' ? 'displayP3' : 'sRGB'}-hex`;
     hexText.characters = `#${
       colorSpace === 'DISPLAY_P3' ? aSwatch.dispP3Hex : aSwatch.sRgbHex
     }`;
+    // sRgbHexText
+    if (sRgbHexText) {
+      sRgbHexText.name = 'sRGB-hex';
+      sRgbHexText.characters = `#${aSwatch.sRgbHex}`;
+    }
     // gamutText
     gamutText.name = 'gamut';
     gamutText.characters = aSwatch.gamut;
@@ -343,7 +353,7 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
         // lightnessText
         const lightnessText = figma.createText();
         elementFrame.appendChild(lightnessText);
-        lightnessText.name = 'APCA Contrast';
+        lightnessText.name = 'lc';
         lightnessText.fontName = fontNames[1];
         lightnessText.fontSize = IDX_FONTSIZE;
         lightnessText.lineHeight = { value: IDX_FONTSIZE, unit: 'PIXELS' };
