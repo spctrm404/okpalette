@@ -58,13 +58,13 @@ const createPalette = (palette: Palette) => {
   const paletteFrame = figma.createFrame();
   paletteFrame.name = `OKP_step${palette.swatchStep}_l${formatDigits(
     100 * palette.peakLightness,
-    3,
+    0,
     0
-  )}_c${formatDigits(100 * palette.peakChroma, 2, 1)}_h${formatDigits(
+  )}_c${formatDigits(100 * palette.peakChroma, 0, 1)}_h${formatDigits(
     palette.hues.from,
-    1,
+    0,
     0
-  )}-${formatDigits(palette.hues.to, 1, 0)}`;
+  )}-${formatDigits(palette.hues.to, 0, 0)}`;
   const { x: centerX, y: centerY } = figma.viewport.center;
   paletteFrame.x = Math.floor(centerX);
   paletteFrame.y = Math.floor(centerY);
@@ -221,15 +221,15 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
   const matrix = Matrix.fromSerialized(apcaMatrix.matrix);
   // matrixFrame
   const matrixFrame = figma.createFrame();
-  matrixFrame.name = `OKP-Matrix_step${palette.swatchStep}_l${formatDigits(
+  matrixFrame.name = `OKP-Matrix_step${palette.swatchStep}_l-${formatDigits(
     100 * palette.peakLightness,
-    3,
+    0,
     0
-  )}_c${formatDigits(100 * palette.peakChroma, 2, 1)}_h${formatDigits(
+  )}_c-${formatDigits(100 * palette.peakChroma, 0, 1)}_h-${formatDigits(
     palette.hues.from,
-    1,
+    0,
     0
-  )}-${formatDigits(palette.hues.to, 1, 0)}`;
+  )}-${formatDigits(palette.hues.to, 0, 0)}`;
   const { x: centerX, y: centerY } = figma.viewport.center;
   matrixFrame.x = Math.floor(centerX);
   matrixFrame.y = Math.floor(centerY) + 2 * (2 * PALETTE_PY + SWATCH_H);
@@ -259,7 +259,7 @@ const createMatrix = (apcaMatrix: ApcaMatrix) => {
         matrixFrame.appendChild(elementFrame);
         elementFrame.name = `bg-${matrixX * palette.swatchStep}_fg-${
           matrixY * palette.swatchStep
-        }_${Math.abs(anApcaContrast)}`;
+        }_Lc-${Math.abs(anApcaContrast)}`;
         elementFrame.x = PALETTE_PX + matrixX * (SWATCH_W + PALETTE_GX);
         elementFrame.y = PALETTE_PY + matrixY * (SWATCH_H + PALETTE_GY);
         elementFrame.resize(SWATCH_W, SWATCH_H);
