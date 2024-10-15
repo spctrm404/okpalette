@@ -197,19 +197,12 @@ export const createPalette = ({
 
 export const calculateApcaScore = (
   { r: fgR, g: fgG, b: fgB }: RGB,
-  { r: bgR, g: bgG, b: bgB }: RGB,
-  colorSpace: FigmaDocumentColorSpace
+  { r: bgR, g: bgG, b: bgB }: RGB
 ): number => {
-  if (colorSpace === 'DISPLAY_P3') {
-    const fgY = displayP3toY([fgR, fgG, fgB]);
-    const bgY = displayP3toY([bgR, bgG, bgB]);
-    const contrast = APCAcontrast(fgY, bgY);
-    return Math.round(Number(contrast));
-  } else {
-    return Math.round(
-      Number(APCAcontrast(sRGBtoY([fgR, fgG, fgB]), sRGBtoY([bgR, bgG, bgB])))
-    );
-  }
+  const fgY = displayP3toY([fgR, fgG, fgB]);
+  const bgY = displayP3toY([bgR, bgG, bgB]);
+  const contrast = APCAcontrast(fgY, bgY);
+  return Math.round(Number(contrast));
 };
 
 export const createApcaMatrix = (
@@ -224,8 +217,7 @@ export const createApcaMatrix = (
         { x: xIdx, y: yIdx },
         calculateApcaScore(
           colorspace == 'DISPLAY_P3' ? fg.dispP3 : fg.sRgb,
-          colorspace == 'DISPLAY_P3' ? bg.dispP3 : bg.sRgb,
-          colorspace
+          colorspace == 'DISPLAY_P3' ? bg.dispP3 : bg.sRgb
         )
       );
     });
