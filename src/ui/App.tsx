@@ -275,238 +275,264 @@ function App() {
 
   return (
     <>
-      <div className={cx('section', 'doc-color')}>
-        <div className={cx('label', 'doc-color__label')}>
-          Document's Color Space:
-        </div>
-        <div className={cx('value', 'doc-color__value')}>
-          {documentColorSpace == 'DISPLAY_P3' && 'Display P3'}
-          {documentColorSpace == 'SRGB' && 'sRGB'}
-          {documentColorSpace == 'LEGACY' && 'Legacy'}
-        </div>
-      </div>
-      <div className={cx('divider')}></div>
-      <div className={cx('section', 'h')}>
-        <div className={cx('section-label', 'h__section-label')}>Hue</div>
-        <div className={cx('part', 'h__part', 'h__part--switch')}>
-          <div className={cx('label', 'h__label')} id={hueRangedId}>
-            Ranged:
-          </div>
-          <Switch
-            aria-labelledby={hueRangedId}
-            className={cx('h__switch')}
-            isSelected={state.isHueRanged}
-            onChange={onChangeHueRangedHandler}
-          />
-        </div>
-        <div className={cx('part', 'h__part', 'h__part--slider')}>
-          <Slider
-            aria-labelledby={hueFromId}
-            className={cx('h__slider', 'h__slider--from')}
-            value={state.hues.from}
-            minValue={0}
-            maxValue={360}
-            step={HUE_STEP}
-            onChange={onChangeHueFromHandler}
-            onChangeEnd={onChangeHueFromHandler}
-          />
-          <Slider
-            aria-labelledby={hueToId}
-            className={cx('h__slider', 'h__slider--to')}
-            isDisabled={!state.isHueRanged}
-            value={state.hues.to}
-            minValue={0}
-            maxValue={360}
-            step={HUE_STEP}
-            onChange={onChangeHueToHandler}
-            onChangeEnd={onChangeHueToHandler}
-          />
-          <div className={cx('h__gamut')}></div>
-        </div>
-        <div
-          className={cx(
-            'part--number-field',
-            'part',
-            'h__part',
-            'h__part--number-field'
-          )}
-        >
-          <div className={cx('number-field-group', 'h__number-field-group')}>
-            <div className={cx('label', 'h__label')} id={hueFromId}>
-              From:
-            </div>
-            <NumberField
-              aria-labelledby={hueFromId}
-              className={cx('h__number-field', 'h__number-field--from')}
-              value={state.hues.from}
-              minValue={0}
-              maxValue={360}
-              step={HUE_STEP}
-              onChange={onChangeHueFromHandler}
-              noButton={true}
-            />
-          </div>
-          <div className={cx('number-field-group', 'h__number-field-group')}>
-            <div className={cx('label', 'h__label')} id={hueToId}>
-              To:
-            </div>
-            <NumberField
-              aria-labelledby={hueToId}
-              className={cx('h__number-field', 'h__number-field--to')}
-              isDisabled={!state.isHueRanged}
-              value={state.hues.to}
-              minValue={0}
-              maxValue={360}
-              step={HUE_STEP}
-              onChange={onChangeHueToHandler}
-              noButton={true}
-            />
-          </div>
-        </div>
-      </div>
-      <div className={cx('divider')}></div>
-      <div className={cx('section', 'l-c')}>
-        <div className={cx('section-label', 'l-c__section-label')} id={lcId}>
-          Lightness & Chroma
-        </div>
-        <div className={cx('part', 'l-c__part', 'l-c__part--xy-slider')}>
-          <WebGl
-            className={cx('l-c__gamut')}
-            documentColorSpace={documentColorSpace}
-            peakLightness={state.peakLightness}
-            peakChroma={state.peakLightness}
-            hues={state.hues}
-          />
-          <XYSlider
-            aria-labelledby={lcId}
-            className={cx('l-c__xy-slider')}
-            minValue={{ x: 0, y: 0 }}
-            maxValue={{ x: 1, y: DISP_P3_CHROMA_LIMIT }}
-            step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-            value={{
-              x: state.peakLightness,
-              y: state.peakChroma,
-            }}
-            onChangeEnd={onChangeLightnessAndChromaHandler}
-            onChange={onChangeLightnessAndChromaHandler}
-          />
-        </div>
-        <div
-          className={cx(
-            'part--number-field',
-            'part',
-            'l-c__part',
-            'l-c__part--number-field'
-          )}
-        >
-          <div className={cx('number-field-group', 'l__number-field-group')}>
-            <div className={cx('label', 'l__label')} id={lId}>
-              Lightness:
-            </div>
-            <NumberField
-              aria-labelledby={lId}
-              className={cx('l-c__number-field', 'l-c__number-field--l')}
-              value={state.peakLightness}
-              minValue={0}
-              maxValue={1}
-              step={LIGHTNESS_STEP}
-              onChange={onChangeLightnessHandler}
-              noButton={true}
-            />
-          </div>
-          <div className={cx('number-field-group', 'l__number-field-group')}>
-            <div className={cx('label', 'l__label')} id={cId}>
-              Chroma:
-            </div>
-            <NumberField
-              aria-labelledby={cId}
-              className={cx('l-c__number-field', 'l-c__number-field--c')}
-              value={state.peakChroma}
-              minValue={0}
-              maxValue={DISP_P3_CHROMA_LIMIT}
-              step={CHROMA_STEP}
-              onChange={onChangeChromaHandler}
-              noButton={true}
-            />
-          </div>
-        </div>
-      </div>
-      <div className={cx('divider')}></div>
-      <div className={cx('section', 'input')}>
-        <div
-          className={cx('section-label', 'input__section-label')}
-          // id={stepId}
-        >
-          RGB to okLCh
-        </div>
-        <div className={cx('part', 'input__part')}>
-          <div className={cx('input__swatch')}></div>
-          <NumberField
-            // aria-labelledby={cId}
-            className={cx('input__number-field', 'input__number-field--r')}
-            value={0}
-            minValue={0}
-            maxValue={255}
-            step={1}
-            onChange={() => {}}
-            noButton={true}
-          />
-          <NumberField
-            // aria-labelledby={cId}
-            className={cx('input__number-field', 'input__number-field--g')}
-            value={0}
-            minValue={0}
-            maxValue={255}
-            step={1}
-            onChange={() => {}}
-            noButton={true}
-          />
-          <NumberField
-            // aria-labelledby={cId}
-            className={cx('input__number-field', 'input__number-field--b')}
-            value={0}
-            minValue={0}
-            maxValue={255}
-            step={1}
-            onChange={() => {}}
-            noButton={true}
-          />
-        </div>
-      </div>
-      <div className={cx('divider')}></div>
-      <div className={cx('section', 'step')}>
-        <div className={cx('section-label', 'step__section-label')} id={stepId}>
-          Swatch Step
-        </div>
-        <div className={cx('part', 'step__part')}>
-          <Radio
-            aria-labelledby={stepId}
-            className={cx('step__radio')}
-            radioItems={radioItemsRef.current}
-            value={`${state.swatchStep}`}
-            onChange={onChangeSwatchStepHandler}
-            orientation="horizontal"
-          />
-        </div>
-      </div>
-      <div className={cx('divider')}></div>
-      <div className={cx('section', 'button')}>
-        <div className={cx('part', 'button__part')}>
-          {/* <IconButton
-            className={cx('button__option')}
-            buttontype="tonal"
-            materialIcon="settings"
-            onPress={() => {}}
-          /> */}
-          <Button
-            className={cx('button__create')}
-            buttontype="filled"
-            text="Create"
-            onPress={sendMsg}
-          />
-        </div>
-      </div>
+      <Button
+        buttontype="filled"
+        label="Create"
+        materialIcon="menu"
+        onPress={sendMsg}
+      />
+      <IconButton buttontype="filled" materialIcon="add" onPress={sendMsg} />
+      <NumberField
+        label="M"
+        value={state.hues.from}
+        minValue={0}
+        maxValue={360}
+        step={HUE_STEP}
+        onChange={onChangeHueFromHandler}
+      />
+      <NumberField
+        value={state.hues.to}
+        minValue={0}
+        maxValue={360}
+        step={HUE_STEP}
+        onChange={onChangeHueFromHandler}
+        noButton={true}
+        isDisabled={true}
+      />
     </>
+    // <>
+    //   <div className={cx('section', 'doc-color')}>
+    //     <div className={cx('label', 'doc-color__label')}>
+    //       Document's Color Space:
+    //     </div>
+    //     <div className={cx('value', 'doc-color__value')}>
+    //       {documentColorSpace == 'DISPLAY_P3' && 'Display P3'}
+    //       {documentColorSpace == 'SRGB' && 'sRGB'}
+    //       {documentColorSpace == 'LEGACY' && 'Legacy'}
+    //     </div>
+    //   </div>
+    //   <div className={cx('divider')}></div>
+    //   <div className={cx('section', 'h')}>
+    //     <div className={cx('section-label', 'h__section-label')}>Hue</div>
+    //     <div className={cx('part', 'h__part', 'h__part--switch')}>
+    //       <div className={cx('label', 'h__label')} id={hueRangedId}>
+    //         Ranged:
+    //       </div>
+    //       <Switch
+    //         aria-labelledby={hueRangedId}
+    //         className={cx('h__switch')}
+    //         isSelected={state.isHueRanged}
+    //         onChange={onChangeHueRangedHandler}
+    //       />
+    //     </div>
+    //     <div className={cx('part', 'h__part', 'h__part--slider')}>
+    //       <Slider
+    //         aria-labelledby={hueFromId}
+    //         className={cx('h__slider', 'h__slider--from')}
+    //         value={state.hues.from}
+    //         minValue={0}
+    //         maxValue={360}
+    //         step={HUE_STEP}
+    //         onChange={onChangeHueFromHandler}
+    //         onChangeEnd={onChangeHueFromHandler}
+    //       />
+    //       <Slider
+    //         aria-labelledby={hueToId}
+    //         className={cx('h__slider', 'h__slider--to')}
+    //         isDisabled={!state.isHueRanged}
+    //         value={state.hues.to}
+    //         minValue={0}
+    //         maxValue={360}
+    //         step={HUE_STEP}
+    //         onChange={onChangeHueToHandler}
+    //         onChangeEnd={onChangeHueToHandler}
+    //       />
+    //       <div className={cx('h__gamut')}></div>
+    //     </div>
+    //     <div
+    //       className={cx(
+    //         'part--number-field',
+    //         'part',
+    //         'h__part',
+    //         'h__part--number-field'
+    //       )}
+    //     >
+    //       <div className={cx('number-field-group', 'h__number-field-group')}>
+    //         <div className={cx('label', 'h__label')} id={hueFromId}>
+    //           From:
+    //         </div>
+    //         <NumberField
+    //           aria-labelledby={hueFromId}
+    //           className={cx('h__number-field', 'h__number-field--from')}
+    //           value={state.hues.from}
+    //           minValue={0}
+    //           maxValue={360}
+    //           step={HUE_STEP}
+    //           onChange={onChangeHueFromHandler}
+    //           noButton={true}
+    //         />
+    //       </div>
+    //       <div className={cx('number-field-group', 'h__number-field-group')}>
+    //         <div className={cx('label', 'h__label')} id={hueToId}>
+    //           To:
+    //         </div>
+    //         <NumberField
+    //           aria-labelledby={hueToId}
+    //           className={cx('h__number-field', 'h__number-field--to')}
+    //           isDisabled={!state.isHueRanged}
+    //           value={state.hues.to}
+    //           minValue={0}
+    //           maxValue={360}
+    //           step={HUE_STEP}
+    //           onChange={onChangeHueToHandler}
+    //           noButton={true}
+    //         />
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <div className={cx('divider')}></div>
+    //   <div className={cx('section', 'l-c')}>
+    //     <div className={cx('section-label', 'l-c__section-label')} id={lcId}>
+    //       Lightness & Chroma
+    //     </div>
+    //     <div className={cx('part', 'l-c__part', 'l-c__part--xy-slider')}>
+    //       <WebGl
+    //         className={cx('l-c__gamut')}
+    //         documentColorSpace={documentColorSpace}
+    //         peakLightness={state.peakLightness}
+    //         peakChroma={state.peakLightness}
+    //         hues={state.hues}
+    //       />
+    //       <XYSlider
+    //         aria-labelledby={lcId}
+    //         className={cx('l-c__xy-slider')}
+    //         minValue={{ x: 0, y: 0 }}
+    //         maxValue={{ x: 1, y: DISP_P3_CHROMA_LIMIT }}
+    //         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
+    //         value={{
+    //           x: state.peakLightness,
+    //           y: state.peakChroma,
+    //         }}
+    //         onChangeEnd={onChangeLightnessAndChromaHandler}
+    //         onChange={onChangeLightnessAndChromaHandler}
+    //       />
+    //     </div>
+    //     <div
+    //       className={cx(
+    //         'part--number-field',
+    //         'part',
+    //         'l-c__part',
+    //         'l-c__part--number-field'
+    //       )}
+    //     >
+    //       <div className={cx('number-field-group', 'l__number-field-group')}>
+    //         <div className={cx('label', 'l__label')} id={lId}>
+    //           Lightness:
+    //         </div>
+    //         <NumberField
+    //           aria-labelledby={lId}
+    //           className={cx('l-c__number-field', 'l-c__number-field--l')}
+    //           value={state.peakLightness}
+    //           minValue={0}
+    //           maxValue={1}
+    //           step={LIGHTNESS_STEP}
+    //           onChange={onChangeLightnessHandler}
+    //           noButton={true}
+    //         />
+    //       </div>
+    //       <div className={cx('number-field-group', 'l__number-field-group')}>
+    //         <div className={cx('label', 'l__label')} id={cId}>
+    //           Chroma:
+    //         </div>
+    //         <NumberField
+    //           aria-labelledby={cId}
+    //           className={cx('l-c__number-field', 'l-c__number-field--c')}
+    //           value={state.peakChroma}
+    //           minValue={0}
+    //           maxValue={DISP_P3_CHROMA_LIMIT}
+    //           step={CHROMA_STEP}
+    //           onChange={onChangeChromaHandler}
+    //           noButton={true}
+    //         />
+    //       </div>
+    //     </div>
+    //   </div>
+    //   <div className={cx('divider')}></div>
+    //   <div className={cx('section', 'input')}>
+    //     <div
+    //       className={cx('section-label', 'input__section-label')}
+    //       // id={stepId}
+    //     >
+    //       RGB to okLCh
+    //     </div>
+    //     <div className={cx('part', 'input__part')}>
+    //       <div className={cx('input__swatch')}></div>
+    //       <NumberField
+    //         // aria-labelledby={cId}
+    //         className={cx('input__number-field', 'input__number-field--r')}
+    //         value={0}
+    //         minValue={0}
+    //         maxValue={255}
+    //         step={1}
+    //         onChange={() => {}}
+    //         noButton={true}
+    //       />
+    //       <NumberField
+    //         // aria-labelledby={cId}
+    //         className={cx('input__number-field', 'input__number-field--g')}
+    //         value={0}
+    //         minValue={0}
+    //         maxValue={255}
+    //         step={1}
+    //         onChange={() => {}}
+    //         noButton={true}
+    //       />
+    //       <NumberField
+    //         // aria-labelledby={cId}
+    //         className={cx('input__number-field', 'input__number-field--b')}
+    //         value={0}
+    //         minValue={0}
+    //         maxValue={255}
+    //         step={1}
+    //         onChange={() => {}}
+    //         noButton={true}
+    //       />
+    //     </div>
+    //   </div>
+    //   <div className={cx('divider')}></div>
+    //   <div className={cx('section', 'step')}>
+    //     <div className={cx('section-label', 'step__section-label')} id={stepId}>
+    //       Swatch Step
+    //     </div>
+    //     <div className={cx('part', 'step__part')}>
+    //       <Radio
+    //         aria-labelledby={stepId}
+    //         className={cx('step__radio')}
+    //         radioItems={radioItemsRef.current}
+    //         value={`${state.swatchStep}`}
+    //         onChange={onChangeSwatchStepHandler}
+    //         orientation="horizontal"
+    //       />
+    //     </div>
+    //   </div>
+    //   <div className={cx('divider')}></div>
+    //   <div className={cx('section', 'button')}>
+    //     <div className={cx('part', 'button__part')}>
+    //       {/* <IconButton
+    //         className={cx('button__option')}
+    //         buttontype="tonal"
+    //         materialIcon="settings"
+    //         onPress={() => {}}
+    //       /> */}
+    //       <Button
+    //         className={cx('button__create')}
+    //         buttontype="filled"
+    //         text="Create"
+    //         onPress={sendMsg}
+    //       />
+    //     </div>
+    //   </div>
+    // </>
   );
 }
 

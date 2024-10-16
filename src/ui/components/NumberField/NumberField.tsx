@@ -3,6 +3,7 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import {
   NumberField as AriaNumberField,
+  Label as AriaLabel,
   Group as AriaGroup,
   Input as AriaInput,
 } from 'react-aria-components';
@@ -13,6 +14,7 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 type NumberFieldProps = {
+  label?: string;
   minValue?: number;
   maxValue?: number;
   step?: number;
@@ -25,6 +27,7 @@ type NumberFieldProps = {
 };
 
 const NumberField = ({
+  label,
   minValue = 0,
   maxValue = 100,
   step = 1,
@@ -95,11 +98,19 @@ const NumberField = ({
       onKeyDown={onKeyDownHandler}
       onBlur={onBlurHandler}
       isWheelDisabled={isWheelDisabled}
+      {...(label && { 'data-has-label': true })}
       {...(noButton && { 'data-no-button': noButton })}
       style={{ '--min-ch': digitLength() } as React.CSSProperties}
       {...props}
     >
       <AriaGroup className={cx('number-field__group', 'number-field-group')}>
+        {label && (
+          <AriaLabel
+            className={cx('number-field__input__label', 'number-field-label')}
+          >
+            {label}
+          </AriaLabel>
+        )}
         <AriaInput
           className={cx('number-field__input', 'number-field-input')}
           ref={inputRef}

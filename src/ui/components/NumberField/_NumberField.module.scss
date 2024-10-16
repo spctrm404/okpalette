@@ -1,9 +1,11 @@
 @use '../../styles/typography' as t;
 
-$multiplier: 0.75;
-$height: 3rem * $multiplier;
-$shape-height: 2.5rem * $multiplier;
-$input-px: 1rem * $multiplier;
+$multiplier: 1;
+$button-height: 3rem * $multiplier;
+$button-shape-height: 2.5rem * $multiplier;
+$px: 1rem * $multiplier;
+$pl-has-label: 0.75rem * $multiplier;
+$pr-has-label: 1rem * $multiplier;
 $rad: 0.25rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
@@ -12,29 +14,31 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   $root-selector: &;
 
   &__root {
-    // width: 100%;
-    // width: fit-content;
+    display: grid;
+    grid-template-rows: 1fr $button-shape-height 1fr;
+    grid-template-columns: min-content 1fr min-content;
     width: min-content;
-    height: $height;
+    height: $button-height;
+
+    &[data-has-label] {
+      grid-template-columns: min-content min-content 1fr min-content;
+    }
+
+    &[data-no-button] {
+      grid-template-columns: 1fr;
+    }
+
+    &[data-has-label][data-no-button] {
+      grid-template-columns: min-content 1fr;
+    }
   }
 
   &__group {
     display: grid;
-    grid-template-rows: 1fr $shape-height 1fr;
-    grid-template-columns:
-      min-content minmax(
-        calc((var(--min-ch) + 1) * 1ch + 2 * $input-px),
-        calc(9ch + 2 * $input-px)
-      )
-      min-content;
-    place-items: stretch stretch;
-
-    @at-root #{$root-selector}[data-no-button] #{&} {
-      grid-template-columns: minmax(
-        calc((var(--min-ch) + 1) * 1ch + 2 * $input-px),
-        calc(9ch + 2 * $input-px)
-      );
-    }
+    grid-template-rows: subgrid;
+    grid-template-columns: subgrid;
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
   }
 
   &__input {
@@ -42,15 +46,17 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
     position: relative;
     z-index: 3;
-    grid-row: 1 / -1;
+    box-sizing: content-box;
+    grid-row: 2 / span 1;
     grid-column: 2 / span 1;
+    min-width: calc((var(--min-ch) + 1) * 1ch);
     padding-block: 0;
-    padding-inline: $input-px;
+    padding-inline: $px;
     color: var(--on-secondary-container);
     text-align: right;
+    cursor: pointer;
     background-color: transparent;
     border: 0;
-    border-radius: $rad;
     transition: color $duration $easing;
     @include t.apply-role('number');
 
@@ -62,8 +68,45 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       color: color-mix(in oklch, var(--on-surface) 38%, transparent);
     }
 
+    @at-root #{$root-selector}[data-has-label] #{&} {
+      grid-column: 3 / span 1;
+      padding-inline: 0 $pr-has-label;
+    }
+
     @at-root #{$root-selector}[data-no-button] #{&} {
       grid-column: 1 / span 1;
+    }
+
+    @at-root #{$root-selector}[data-has-label][data-no-button] #{&} {
+      grid-column: 2 / span 1;
+    }
+
+    &__label {
+      position: relative;
+      z-index: 4;
+      display: grid;
+      grid-template-rows: 1fr;
+      grid-template-columns: 1fr;
+      grid-row: 2 / span 1;
+      grid-column: 2 / span 1;
+      align-items: center;
+      padding-inline: $pl-has-label $pl-has-label - 0.0625rem;
+      padding-top: 0.0938rem;
+      color: var(--outline);
+      cursor: pointer;
+      user-select: none;
+      border-right: 0.0625rem solid var(--outline-variant);
+      transition: color $duration $easing, border-color $duration $easing;
+      @include t.apply-role('number-field-label');
+
+      &:has(~ #{$parent-selector}[data-disabled]) {
+        color: color-mix(in oklch, var(--on-surface) 38%, transparent);
+        border-color: color-mix(in oklch, var(--on-surface) 12%, transparent);
+      }
+
+      @at-root #{$root-selector}[data-no-button] #{&} {
+        grid-column: 1 / span 1;
+      }
     }
 
     &__shape {
@@ -83,8 +126,16 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         );
       }
 
+      @at-root #{$root-selector}[data-has-label] #{&} {
+        grid-column: 2 / span 2;
+      }
+
       @at-root #{$root-selector}[data-no-button] #{&} {
         grid-column: 1 / span 1;
+      }
+
+      @at-root #{$root-selector}[data-has-label][data-no-button] #{&} {
+        grid-column: 1 / span 2;
       }
     }
 
@@ -104,6 +155,10 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         opacity: 0.08;
         transform: scale(100%, 100%);
       }
+      @at-root #{$parent-selector}__label:hover ~ #{&} {
+        opacity: 0.08;
+        transform: scale(100%, 100%);
+      }
       @at-root #{$parent-selector}[data-focused] ~ #{&} {
         opacity: 0.08;
         transform: scale(100%, 100%);
@@ -117,15 +172,22 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         transform: scale(0%, 100%);
       }
 
+      @at-root #{$root-selector}[data-has-label] #{&} {
+        grid-column: 2 / span 2;
+      }
+
       @at-root #{$root-selector}[data-no-button] #{&} {
         grid-column: 1 / span 1;
+      }
+
+      @at-root #{$root-selector}[data-has-label][data-no-button] #{&} {
+        grid-column: 1 / span 2;
       }
     }
   }
 
   &__button {
     grid-row: 1 / -1;
-    place-self: center center;
 
     &--part {
       &-decrease {
@@ -133,7 +195,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       }
 
       &-increase {
-        grid-column: 3 / span 1;
+        grid-column: -2 / span 1;
       }
     }
   }

@@ -1,8 +1,8 @@
 @use '../../styles/typography' as t;
 
-$multiplier: 0.75;
-$height: 3rem * $multiplier;
-$shape-height: 2.5rem * $multiplier;
+$multiplier: 1;
+$height: 2.5rem * $multiplier;
+$shape-height: $height;
 $content-px: 1.5rem * $multiplier;
 $content-px-has-icon: 1rem * $multiplier 1.5rem * $multiplier;
 $content-gx: 0.5rem;
@@ -19,7 +19,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
   &__root {
     display: grid;
-    grid-template-rows: 1fr $shape-height 1fr;
+    grid-template-rows: $shape-height;
     grid-template-columns: 1fr;
     place-items: stretch stretch;
     height: $height;
@@ -43,7 +43,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     $parent-selctor: &;
 
     position: relative;
-    grid-row: 2 / span 1;
+    grid-row: 1 / -1;
     grid-column: 1 / -1;
     border-radius: $rad;
 
@@ -189,7 +189,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   &__state {
     position: relative;
     z-index: 2;
-    grid-row: 2 / span 1;
+    grid-row: 1 / -1;
     grid-column: 1 / -1;
     opacity: 0;
     transition: background-color $duration $easing, opacity $duration $easing,
@@ -240,7 +240,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 1fr;
-    grid-row: 2 / span 1;
+    grid-row: 1 / -1;
     grid-column: 1 / -1;
     column-gap: $content-gx;
     place-items: center stretch;
@@ -284,7 +284,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       line-height: $icon-size;
     }
 
-    &__text {
+    &__label {
       grid-row: 1 / -1;
       text-align: center;
       white-space: nowrap;

@@ -8,7 +8,7 @@ const cx = classNames.bind(st);
 type ButtonProps = {
   buttontype?: 'text' | 'outlined' | 'elevated' | 'tonal' | 'filled';
   materialIcon?: string;
-  text?: string;
+  label?: string;
   onPress?: () => void;
   className?: string;
 };
@@ -16,7 +16,7 @@ type ButtonProps = {
 const Button = ({
   buttontype = 'text',
   materialIcon = '',
-  text = '',
+  label = '',
   onPress = () => {},
   className = '',
   ...props
@@ -49,7 +49,9 @@ const Button = ({
             {materialIcon}
           </div>
         )}
-        <div className={cx('button__content__text', 'button-text')}>{text}</div>
+        <div className={cx('button__content__text', 'button-label')}>
+          {label}
+        </div>
       </div>
       <div
         className={cx('button__shape', 'button__shape--part-fg', 'button-fg')}

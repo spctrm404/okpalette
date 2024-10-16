@@ -99,20 +99,24 @@ $role: (
       'Roboto',
       sans-serif,
     ),
-    font-weight: 700,
+    font-weight: 500,
     line-height: 100%,
   ),
   number: (
     scale: 'sm',
-    // font-family: (
-    //   'Martian Mono',
-    //   monospace,
-    // ),
-    font-family:
-      (
-        'Roboto Mono',
-        monospace,
-      ),
+    font-family: (
+      'Roboto Mono',
+      monospace,
+    ),
+    font-weight: 400,
+    line-height: 100%,
+  ),
+  number-field-label: (
+    scale: 'sm',
+    font-family: (
+      'Roboto Condensed',
+      sans-serif,
+    ),
     font-weight: 500,
     line-height: 100%,
   ),
