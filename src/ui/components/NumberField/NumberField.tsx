@@ -1,6 +1,6 @@
 // todo: add num disp option
 
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
   NumberField as AriaNumberField,
   Label as AriaLabel,
@@ -38,24 +38,23 @@ const NumberField = ({
   className = '',
   ...props
 }: NumberFieldProps) => {
-  const innerValueRef = useRef(value);
-  const isInnerValueMatchRef = useRef(true);
+  const [innerValue, setInnerValue] = useState(value);
+  const innerValueRef = useRef(innerValue);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const syncInnerValueToValue = useCallback(() => {
+    setInnerValue(value);
     innerValueRef.current = value;
-    isInnerValueMatchRef.current = true;
   }, [value]);
 
   const onChangeHandler = useCallback((newValue: number) => {
+    setInnerValue(newValue);
     innerValueRef.current = newValue;
-    isInnerValueMatchRef.current = false;
   }, []);
   const onKeyDownHandler = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      onChange?.(innerValueRef.current);
-      if (e.key === 'Enter') inputRef.current?.blur();
+      if (e.key === 'Enter') onChange?.(innerValueRef.current);
     },
     [onChange]
   );
@@ -93,7 +92,7 @@ const NumberField = ({
       minValue={minValue}
       maxValue={maxValue}
       step={step}
-      value={isInnerValueMatchRef.current ? value : innerValueRef.current}
+      value={innerValue}
       onChange={onChangeHandler}
       onKeyDown={onKeyDownHandler}
       onBlur={onBlurHandler}
