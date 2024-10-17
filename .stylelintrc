@@ -5,5 +5,12 @@
     "stylelint-config-recess-order"
   ],
   "plugins": ["stylelint-scss"],
-  "rules": {}
+  "rules": {
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global"]
+      }
+    ]
+  }
 }

@@ -1,15 +1,17 @@
 import { useCallback } from 'react';
-import { ToggleButton as AriaToggleButton } from 'react-aria-components';
+import {
+  ToggleButton as AriaToggleButton,
+  ToggleButtonProps as AriaToggleButtonProps,
+} from 'react-aria-components';
 import st from './_ToggleButton.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-type ToggleButtonProps = {
+type ToggleButtonProps = AriaToggleButtonProps & {
   buttontype?: 'standard' | 'outlined' | 'tonal' | 'filled';
   materialIcon?: string;
   materialIconAlt?: string;
-  isSelected?: boolean;
   onChange?: (newBoolean: boolean) => void;
   className?: string;
 };
@@ -18,7 +20,6 @@ const ToggleButton = ({
   buttontype = 'standard',
   materialIcon = '',
   materialIconAlt = '',
-  isSelected = false,
   onChange = () => {},
   className = '',
   ...props
@@ -34,7 +35,6 @@ const ToggleButton = ({
     <AriaToggleButton
       className={cx('toggle-button', 'toggle-button__root', className)}
       data-button-type={buttontype}
-      isSelected={isSelected}
       onChange={onChangeHandler}
       {...props}
     >

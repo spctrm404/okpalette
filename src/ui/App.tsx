@@ -283,7 +283,7 @@ function App() {
       />
       <IconButton buttontype="filled" materialIcon="add" onPress={sendMsg} />
       <NumberField
-        label="M"
+        label="Hb"
         value={state.hues.from}
         minValue={0}
         maxValue={360}
@@ -291,14 +291,14 @@ function App() {
         onChange={onChangeHueFromHandler}
       />
       <NumberField
-        label="H"
+        label="He"
         value={state.hues.to}
         minValue={0}
         maxValue={360}
         step={HUE_STEP}
-        onChange={onChangeHueFromHandler}
+        onChange={onChangeHueToHandler}
         noButton={true}
-        isDisabled={true}
+        isDisabled={!state.isHueRanged}
       />
       <Slider
         aria-labelledby={hueRangedId}
@@ -317,9 +317,22 @@ function App() {
         minValue={0}
         maxValue={360}
         step={HUE_STEP}
-        onChange={onChangeHueFromHandler}
-        onChangeEnd={onChangeHueFromHandler}
+        onChange={onChangeHueToHandler}
+        onChangeEnd={onChangeHueToHandler}
         orientation={'vertical'}
+        isDisabled={!state.isHueRanged}
+      />
+      <Switch
+        aria-labelledby={hueRangedId}
+        isSelected={state.isHueRanged}
+        onChange={onChangeHueRangedHandler}
+      />
+      <ToggleButton
+        aria-labelledby={hueRangedId}
+        isSelected={state.isHueRanged}
+        materialIcon="toggle_off"
+        materialIconAlt="toggle_on"
+        onChange={onChangeHueRangedHandler}
       />
     </>
     // <>

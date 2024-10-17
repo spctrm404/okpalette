@@ -1,8 +1,9 @@
 @use '../../styles/typography' as t;
 
-$multiplier: 1;
+$multiplier: 0.75;
 $button-height: 3rem * $multiplier;
 $button-shape-height: 2.5rem * $multiplier;
+$button-icon-size: 1.5rem;
 $px: 1rem * $multiplier;
 $pl-has-label: 0.75rem * $multiplier;
 $pr-has-label: 1rem * $multiplier;
@@ -17,6 +18,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     display: grid;
     grid-template-rows: 1fr $button-shape-height 1fr;
     grid-template-columns: min-content 1fr min-content;
+    place-items: stretch stretch;
     width: min-content;
     height: $button-height;
 
@@ -189,7 +191,16 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   }
 
   &__button {
+    grid-template-rows: 1fr $button-shape-height 1fr;
+    grid-template-columns: 1fr $button-shape-height 1fr;
     grid-row: 1 / -1;
+    width: $button-height;
+    height: $button-height;
+
+    :global(.icon-button-icon) {
+      font-size: $button-icon-size;
+      line-height: $button-icon-size;
+    }
 
     &--part {
       &-decrease {

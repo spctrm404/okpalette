@@ -1,14 +1,16 @@
 import { useCallback } from 'react';
-import { Switch as AriaSwitch } from 'react-aria-components';
+import {
+  Switch as AriaSwitch,
+  SwitchProps as AriaSwitchProps,
+} from 'react-aria-components';
 import st from './_Switch.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-type SwitchProps = {
+type SwitchProps = AriaSwitchProps & {
   materialIcon?: string;
   materialIconAlt?: string;
-  isSelected?: boolean;
   onChange?: (newBoolean: boolean) => void;
   className?: string;
 };
@@ -16,7 +18,6 @@ type SwitchProps = {
 const Switch = ({
   materialIcon = '',
   materialIconAlt = '',
-  isSelected = false,
   onChange = () => {},
   className = '',
   ...props
@@ -31,7 +32,6 @@ const Switch = ({
   return (
     <AriaSwitch
       className={cx('switch', 'switch__root', className)}
-      isSelected={isSelected}
       onChange={onChangeHandler}
       {...props}
     >

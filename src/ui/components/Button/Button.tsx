@@ -19,7 +19,7 @@ type ButtonProps = AriaButtonProps & {
 const Button = ({
   buttontype = 'text',
   materialIcon = '',
-  label = '',
+  label = 'label',
   onPress = () => {},
   className = '',
   ...props
