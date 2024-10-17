@@ -44,23 +44,10 @@ const NumberField = ({
   }, [value]);
 
   const onChangeHandler = useCallback((newValue: number) => {
-    console.log('change', newValue);
     setInnerValue(newValue);
     innerValueRef.current = newValue;
+    onChange(innerValueRef.current);
   }, []);
-  const onKeyDownHandler = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') onChange?.(innerValueRef.current);
-    },
-    [onChange]
-  );
-  const onBlurHandler = useCallback(() => {
-    onChange?.(innerValueRef.current);
-  }, [onChange]);
-  const onPressHandler = useCallback(() => {
-    console.log('press');
-    onChange?.(innerValueRef.current);
-  }, [onChange]);
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
@@ -91,8 +78,6 @@ const NumberField = ({
       step={step}
       value={innerValue}
       onChange={onChangeHandler}
-      onKeyDown={onKeyDownHandler}
-      onBlur={onBlurHandler}
       {...(label && { 'data-has-label': true })}
       {...(noButton && { 'data-no-button': noButton })}
       style={{ '--min-ch': digitLength() } as React.CSSProperties}
@@ -132,7 +117,6 @@ const NumberField = ({
               )}
               buttontype={'tonal'}
               materialIcon={'remove'}
-              onPress={onPressHandler}
               slot={'decrement'}
             />
             <IconButton
@@ -143,7 +127,6 @@ const NumberField = ({
               )}
               buttontype={'tonal'}
               materialIcon={'add'}
-              onPress={onPressHandler}
               slot={'increment'}
             />
           </>

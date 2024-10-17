@@ -291,6 +291,7 @@ function App() {
         onChange={onChangeHueFromHandler}
       />
       <NumberField
+        label="H"
         value={state.hues.to}
         minValue={0}
         maxValue={360}
@@ -300,6 +301,7 @@ function App() {
         isDisabled={true}
       />
       <Slider
+        aria-labelledby={hueRangedId}
         thumbPos="bottom"
         value={state.hues.from}
         minValue={0}
@@ -309,6 +311,7 @@ function App() {
         onChangeEnd={onChangeHueFromHandler}
       />
       <Slider
+        aria-labelledby={hueRangedId}
         thumbPos="right"
         value={state.hues.to}
         minValue={0}
