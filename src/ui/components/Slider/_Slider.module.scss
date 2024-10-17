@@ -1,4 +1,4 @@
-$multiplier: 0.5;
+$multiplier: 0.75;
 $min-width: 6.25rem;
 $track-height: 1rem * $multiplier;
 $thumb-size: 3rem * $multiplier;
@@ -116,13 +116,28 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     width: $thumb-size;
     height: $thumb-size;
     cursor: pointer;
-    @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
+    @at-root #{$root-selector}[data-orientation='horizontal'][data-thumb-pos='center']
+        #{&} {
       top: 50%;
-      transform: translate(0, -50%);
+    }
+    @at-root #{$root-selector}[data-orientation='horizontal'][data-thumb-pos='top']
+        #{&} {
+      top: calc(50% - 0.5 * ($thumb-shape-height - $track-height));
+    }
+    @at-root #{$root-selector}[data-orientation='horizontal'][data-thumb-pos='bottom']
+        #{&} {
+      top: calc(50% + 0.5 * ($thumb-shape-height - $track-height));
     }
     @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
       left: 50%;
-      transform: translate(-50%, 0);
+    }
+    @at-root #{$root-selector}[data-orientation='vertical'][data-thumb-pos='left']
+        #{&} {
+      left: calc(50% - 0.5 * ($thumb-shape-height - $track-height));
+    }
+    @at-root #{$root-selector}[data-orientation='vertical'][data-thumb-pos='right']
+        #{&} {
+      left: calc(50% + 0.5 * ($thumb-shape-height - $track-height));
     }
 
     @at-root #{$root-selector}[data-disabled] #{&} {

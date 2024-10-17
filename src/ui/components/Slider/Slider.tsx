@@ -3,24 +3,22 @@ import {
   Slider as AriaSlider,
   SliderThumb as AriaSliderThumb,
   SliderTrack as AriaSliderTrack,
+  SliderProps as AriaSliderProps,
 } from 'react-aria-components';
 import st from './_Slider.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-type SliderProps = {
-  minValue?: number;
-  maxValue?: number;
-  step?: number;
-  value?: number;
-  onChangeEnd?: (newNumber: number) => void;
-  onChange?: (newNumber: number) => void;
+type SliderProps = AriaSliderProps<number> & {
+  thumbPos?: 'center' | 'top' | 'bottom' | 'left' | 'right';
+  onChangeEnd: (newNumber: number) => void;
+  onChange: (newNumber: number) => void;
   className?: string;
-  isDisabled?: boolean;
 };
 
 const Slider = ({
+  thumbPos = 'center',
   minValue = 0,
   maxValue = 100,
   step = 1,
@@ -57,6 +55,7 @@ const Slider = ({
       value={value}
       onChangeEnd={onChangeEndHandler}
       onChange={onChangeHandler}
+      data-thumb-pos={thumbPos}
       style={{ '--normalized-val': normalizedValue() } as React.CSSProperties}
       {...props}
     >

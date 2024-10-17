@@ -1,11 +1,14 @@
 import { useCallback } from 'react';
-import { Button as AriaButton } from 'react-aria-components';
+import {
+  Button as AriaButton,
+  ButtonProps as AriaButtonProps,
+} from 'react-aria-components';
 import st from './_Button.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-type ButtonProps = {
+type ButtonProps = AriaButtonProps & {
   buttontype?: 'text' | 'outlined' | 'elevated' | 'tonal' | 'filled';
   materialIcon?: string;
   label?: string;

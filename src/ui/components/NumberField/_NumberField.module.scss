@@ -66,6 +66,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
     &[data-disabled] {
       color: color-mix(in oklch, var(--on-surface) 38%, transparent);
+      cursor: auto;
     }
 
     @at-root #{$root-selector}[data-has-label] #{&} {
@@ -101,6 +102,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
       &:has(~ #{$parent-selector}[data-disabled]) {
         color: color-mix(in oklch, var(--on-surface) 38%, transparent);
+        cursor: auto;
         border-color: color-mix(in oklch, var(--on-surface) 12%, transparent);
       }
 

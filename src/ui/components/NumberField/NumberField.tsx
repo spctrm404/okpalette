@@ -1,4 +1,5 @@
 // todo: add num disp option
+// todo: change val whilepressing
 
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -6,6 +7,7 @@ import {
   Label as AriaLabel,
   Group as AriaGroup,
   Input as AriaInput,
+  NumberFieldProps as AriaNumberFieldProps,
 } from 'react-aria-components';
 import IconButton from '../IconButton/IconButton';
 import st from './_NumberField.module.scss';
@@ -13,17 +15,11 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-type NumberFieldProps = {
+type NumberFieldProps = AriaNumberFieldProps & {
   label?: string;
-  minValue?: number;
-  maxValue?: number;
-  step?: number;
-  value?: number;
-  onChange?: (newNumber: number) => void;
-  isWheelDisabled?: boolean;
-  className?: string;
-  isDisabled?: boolean;
   noButton?: boolean;
+  onChange?: (newNumber: number) => void;
+  className?: string;
 };
 
 const NumberField = ({
@@ -32,9 +28,8 @@ const NumberField = ({
   maxValue = 100,
   step = 1,
   value = 50,
-  onChange = () => {},
-  isWheelDisabled = true,
   noButton = false,
+  onChange = () => {},
   className = '',
   ...props
 }: NumberFieldProps) => {
@@ -49,6 +44,7 @@ const NumberField = ({
   }, [value]);
 
   const onChangeHandler = useCallback((newValue: number) => {
+    console.log('change', newValue);
     setInnerValue(newValue);
     innerValueRef.current = newValue;
   }, []);
@@ -62,6 +58,7 @@ const NumberField = ({
     onChange?.(innerValueRef.current);
   }, [onChange]);
   const onPressHandler = useCallback(() => {
+    console.log('press');
     onChange?.(innerValueRef.current);
   }, [onChange]);
 
@@ -96,7 +93,6 @@ const NumberField = ({
       onChange={onChangeHandler}
       onKeyDown={onKeyDownHandler}
       onBlur={onBlurHandler}
-      isWheelDisabled={isWheelDisabled}
       {...(label && { 'data-has-label': true })}
       {...(noButton && { 'data-no-button': noButton })}
       style={{ '--min-ch': digitLength() } as React.CSSProperties}

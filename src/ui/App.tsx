@@ -299,6 +299,25 @@ function App() {
         noButton={true}
         isDisabled={true}
       />
+      <Slider
+        thumbPos="bottom"
+        value={state.hues.from}
+        minValue={0}
+        maxValue={360}
+        step={HUE_STEP}
+        onChange={onChangeHueFromHandler}
+        onChangeEnd={onChangeHueFromHandler}
+      />
+      <Slider
+        thumbPos="right"
+        value={state.hues.to}
+        minValue={0}
+        maxValue={360}
+        step={HUE_STEP}
+        onChange={onChangeHueFromHandler}
+        onChangeEnd={onChangeHueFromHandler}
+        orientation={'vertical'}
+      />
     </>
     // <>
     //   <div className={cx('section', 'doc-color')}>

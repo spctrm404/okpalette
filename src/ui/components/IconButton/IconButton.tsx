@@ -1,16 +1,18 @@
 import { useCallback } from 'react';
-import { Button as AriaButton } from 'react-aria-components';
+import {
+  Button as AriaButton,
+  ButtonProps as AriaButtonProps,
+} from 'react-aria-components';
 import st from './_IconButton.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-type IconButtonProps = {
+type IconButtonProps = AriaButtonProps & {
   buttontype?: 'standard' | 'outlined' | 'outlined-child' | 'tonal' | 'filled';
   materialIcon?: string;
   onPress?: () => void;
   className?: string;
-  slot?: string;
 };
 
 const IconButton = ({
