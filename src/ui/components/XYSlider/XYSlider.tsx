@@ -171,13 +171,13 @@ const XYSlider = ({
   const onChangeEndHandler = useCallback(() => {
     const newValue = getValueFromCurrentPosition();
     const quantizedValue = quantizeValue(newValue);
-    onChangeEnd?.(quantizedValue);
+    onChangeEnd(quantizedValue);
   }, [getValueFromCurrentPosition, quantizeValue, onChangeEnd]);
   const onChangeHandler = useCallback(() => {
     const newValue = getValueFromCurrentPosition();
     const clampedValue = clampValue(newValue);
     const quantizedValue = quantizeValue(clampedValue);
-    onChange?.(quantizedValue);
+    onChange(quantizedValue);
   }, [getValueFromCurrentPosition, clampValue, quantizeValue, onChange]);
 
   const onPressStart = useCallback(

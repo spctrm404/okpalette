@@ -1,5 +1,4 @@
 // todo: add num disp option
-// todo: change val whilepressing
 
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
@@ -34,24 +33,25 @@ const NumberField = ({
   ...props
 }: NumberFieldProps) => {
   const [innerValue, setInnerValue] = useState(value);
-  const innerValueRef = useRef(innerValue);
-
-  const inputRef = useRef<HTMLInputElement>(null);
+  const currentInnerValue = useRef(innerValue);
 
   const syncInnerValueToValue = useCallback(() => {
     setInnerValue(value);
-    innerValueRef.current = value;
+    currentInnerValue.current = value;
   }, [value]);
 
-  const onChangeHandler = useCallback((newValue: number) => {
-    setInnerValue(newValue);
-    innerValueRef.current = newValue;
-    onChange(innerValueRef.current);
-  }, []);
+  const onChangeHandler = useCallback(
+    (newValue: number) => {
+      setInnerValue(newValue);
+      currentInnerValue.current = newValue;
+      onChange(currentInnerValue.current);
+    },
+    [onChange]
+  );
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
-  }, [value]);
+  }, [syncInnerValueToValue]);
 
   const digitLength = useCallback(() => {
     const [minIntegerPart, minDecimalPart] = minValue.toString().split('.');
@@ -93,7 +93,6 @@ const NumberField = ({
         )}
         <AriaInput
           className={cx('number-field__input', 'number-field-input')}
-          ref={inputRef}
         />
         <div
           className={cx(
