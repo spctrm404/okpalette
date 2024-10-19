@@ -15,7 +15,7 @@ $guide-thickness: 0.0625rem;
 $guide-rad: 512rem;
 $guide-dash: 0.5rem;
 $guide-gap: 0.25rem;
-$duration: 2000ms;
+$duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
 
 @mixin dashed-line($dash, $gap, $direction, $color) {
