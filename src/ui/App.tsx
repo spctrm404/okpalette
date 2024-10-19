@@ -334,6 +334,18 @@ function App() {
         materialIconAlt="toggle_on"
         onChange={onChangeHueRangedHandler}
       />
+      <XYSlider
+        aria-labelledby={lcId}
+        minValue={{ x: 0, y: 0 }}
+        maxValue={{ x: 1, y: DISP_P3_CHROMA_LIMIT }}
+        step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
+        value={{
+          x: state.peakLightness,
+          y: state.peakChroma,
+        }}
+        onChangeEnd={onChangeLightnessAndChromaHandler}
+        onChange={onChangeLightnessAndChromaHandler}
+      />
     </>
     // <>
     //   <div className={cx('section', 'doc-color')}>
