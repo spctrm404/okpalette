@@ -264,7 +264,6 @@ const XYSlider = ({
       if (!isDisabled) onMove(e);
     },
     onMoveEnd: () => {
-      console.log('thumbMoveEnd');
       if (!isDisabled) onMoveEnd();
     },
   });
@@ -283,13 +282,11 @@ const XYSlider = ({
   const { pressProps: trackPressProps, isPressed: trackIsPressed } = usePress({
     onPress: () => {},
     onPressStart: (e) => {
-      console.log('trackPressStart');
       if (!isDisabled) onPressStart(e);
     },
     onPressEnd: () => {},
     onPressChange: () => {},
     onPressUp: () => {
-      console.log('trackPressUp');
       onPressUp();
     },
   });
@@ -299,7 +296,6 @@ const XYSlider = ({
       if (!isDisabled) onMove(e);
     },
     onMoveEnd: () => {
-      console.log('trackMoveEnd');
       if (!isDisabled) onMoveEnd();
     },
   });
