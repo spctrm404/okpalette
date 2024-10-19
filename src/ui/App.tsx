@@ -346,6 +346,24 @@ function App() {
         onChangeEnd={onChangeLightnessAndChromaHandler}
         onChange={onChangeLightnessAndChromaHandler}
       />
+      <NumberField
+        label="L"
+        value={state.peakLightness}
+        minValue={0}
+        maxValue={1}
+        step={LIGHTNESS_STEP}
+        onChange={onChangeLightnessHandler}
+        noButton={true}
+      />
+      <NumberField
+        label="C"
+        value={state.peakChroma}
+        minValue={0}
+        maxValue={DISP_P3_CHROMA_LIMIT}
+        step={CHROMA_STEP}
+        onChange={onChangeChromaHandler}
+        noButton={true}
+      />
     </>
     // <>
     //   <div className={cx('section', 'doc-color')}>

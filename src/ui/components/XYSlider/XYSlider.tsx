@@ -40,6 +40,8 @@ const XYSlider = ({
   const [position, setPosition] = useState(value);
   const positionRef = useRef(value);
 
+  const syncRef = useRef(true);
+
   const [isDragging, setDragging] = useState(false);
   const [isFocused, setFocused] = useState(false);
 
@@ -67,17 +69,21 @@ const XYSlider = ({
   };
 
   useLayoutEffect(() => {
-    positionRef.current = getPositionFromValue();
-    setPosition(positionRef.current);
+    if (syncRef.current) {
+      console.log('SYNC');
+      positionRef.current = getPositionFromValue();
+      setPosition(positionRef.current);
+    }
   }, [value]);
 
   const getNormalizedPosition = (): XY => {
     if (!trackRef.current || !thumbRef.current) return { x: 0, y: 0 };
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
+    const clampedPosition = getClampedPosition(position);
     return {
-      x: (position.x + 0.5 * thumbRect.width) / trackRect.width,
-      y: (position.y + 0.5 * thumbRect.height) / trackRect.height,
+      x: (clampedPosition.x + 0.5 * thumbRect.width) / trackRect.width,
+      y: (clampedPosition.y + 0.5 * thumbRect.height) / trackRect.height,
     };
   };
 
@@ -122,7 +128,7 @@ const XYSlider = ({
     }, {} as XY);
   };
 
-  const getClampPosition = (position: XY): XY => {
+  const getClampedPosition = (position: XY): XY => {
     if (!trackRef.current || !thumbRef.current) return { x: 0, y: 0 };
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
@@ -153,12 +159,14 @@ const XYSlider = ({
   };
 
   const onPressStart = (e: PressEvent) => {
+    console.log('begin');
+    syncRef.current = false;
+    if (!thumbRef.current) return;
     const thumb = thumbRef.current;
-    if (!thumb) return;
     thumb.focus();
     setFocused(true);
     setDragging(true);
-    const thumbRect = thumb?.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
     positionRef.current = {
       x: e.x - 0.5 * thumbRect.width,
       y: e.y - 0.5 * thumbRect.height,
@@ -167,19 +175,21 @@ const XYSlider = ({
     onChangeHandler();
   };
   const onMove = (e: MoveMoveEvent) => {
+    syncRef.current = false;
     if (e.pointerType === 'keyboard') {
-      const clampedPosition = getClampPosition(positionRef.current);
+      const clampedPosition = getClampedPosition(positionRef.current);
       setPosition(clampedPosition);
       positionRef.current = clampedPosition;
     }
     positionRef.current.x += e.deltaX;
     positionRef.current.y += e.deltaY;
-    console.log('move', positionRef.current);
     setPosition(positionRef.current);
     onChangeHandler();
   };
   const onMoveEnd = () => {
-    const clampedPosition = getClampPosition(positionRef.current);
+    console.log('end');
+    syncRef.current = true;
+    const clampedPosition = getClampedPosition(positionRef.current);
     setPosition(clampedPosition);
     positionRef.current = clampedPosition;
     setDragging(false);
@@ -205,14 +215,10 @@ const XYSlider = ({
   });
   const { moveProps: thumbMoveProp } = useMove({
     onMove: (e) => {
-      if (!isDisabled) {
-        onMove(e);
-      }
+      if (!isDisabled) onMove(e);
     },
     onMoveEnd: () => {
-      if (!isDisabled) {
-        onMoveEnd();
-      }
+      if (!isDisabled) onMoveEnd();
     },
   });
   const thumbInteractionProps = mergeProps(
@@ -235,14 +241,10 @@ const XYSlider = ({
   });
   const { moveProps: trackMoveProps } = useMove({
     onMove: (e) => {
-      if (!isDisabled) {
-        onMove(e);
-      }
+      if (!isDisabled) onMove(e);
     },
     onMoveEnd: () => {
-      if (!isDisabled) {
-        onMoveEnd();
-      }
+      if (!isDisabled) onMoveEnd();
     },
   });
   const trackInteractionProps = mergeProps(

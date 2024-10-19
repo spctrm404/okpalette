@@ -1,4 +1,4 @@
-$multiplier: 0.5;
+$multiplier: 1;
 $min-size: 6.25rem;
 $thumb-size: 3rem * $multiplier;
 $track-rad: 0.25rem;
@@ -15,7 +15,7 @@ $guide-thickness: 0.0625rem;
 $guide-rad: 512rem;
 $guide-dash: 0.5rem;
 $guide-gap: 0.25rem;
-$duration: 200ms;
+$duration: 2000ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
 
 @mixin dashed-line($dash, $gap, $direction, $color) {
@@ -123,7 +123,9 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
         &-top {
           top: 0;
-          bottom: calc(var(--normalized-val-y) * 100% + 0.5 * $thumb-size);
+          bottom: calc(
+            100% - var(--normalized-val-y) * 100% + 0.5 * $thumb-size
+          );
           left: calc(
             var(--normalized-val-x) * 100% + $thumb-shape-size - 0.5 *
               $guide-thickness - 0.5 * $thumb-size
