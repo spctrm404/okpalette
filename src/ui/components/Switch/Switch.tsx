@@ -24,7 +24,7 @@ const Switch = ({
 }: SwitchProps) => {
   const onChangeHandler = useCallback(
     (newBoolean: boolean) => {
-      onChange?.(newBoolean);
+      onChange(newBoolean);
     },
     [onChange]
   );

@@ -26,7 +26,7 @@ const ToggleButton = ({
 }: ToggleButtonProps) => {
   const onChangeHandler = useCallback(
     (newBoolean: boolean) => {
-      onChange?.(newBoolean);
+      onChange(newBoolean);
     },
     [onChange]
   );

@@ -23,7 +23,7 @@ const IconButton = ({
   ...props
 }: IconButtonProps) => {
   const onPressHandler = useCallback(() => {
-    onPress?.();
+    onPress();
   }, [onPress]);
 
   return (

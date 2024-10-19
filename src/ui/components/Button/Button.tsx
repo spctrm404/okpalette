@@ -25,7 +25,7 @@ const Button = ({
   ...props
 }: ButtonProps) => {
   const onPressHandler = useCallback(() => {
-    onPress?.();
+    onPress();
   }, [onPress]);
 
   return (

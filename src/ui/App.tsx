@@ -289,6 +289,9 @@ function App() {
         maxValue={360}
         step={HUE_STEP}
         onChange={onChangeHueFromHandler}
+        formatOptions={{
+          minimumIntegerDigits: 3,
+        }}
       />
       <NumberField
         label="He"
@@ -299,6 +302,9 @@ function App() {
         onChange={onChangeHueToHandler}
         noButton={true}
         isDisabled={!state.isHueRanged}
+        formatOptions={{
+          minimumIntegerDigits: 3,
+        }}
       />
       <Slider
         aria-labelledby={hueRangedId}
@@ -354,6 +360,11 @@ function App() {
         step={LIGHTNESS_STEP}
         onChange={onChangeLightnessHandler}
         noButton={true}
+        formatOptions={{
+          minimumIntegerDigits: 1,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }}
       />
       <NumberField
         label="C"
@@ -363,6 +374,11 @@ function App() {
         step={CHROMA_STEP}
         onChange={onChangeChromaHandler}
         noButton={true}
+        formatOptions={{
+          minimumIntegerDigits: 1,
+          minimumFractionDigits: 3,
+          maximumFractionDigits: 3,
+        }}
       />
     </>
     // <>

@@ -30,13 +30,13 @@ const Slider = ({
 }: SliderProps) => {
   const onChangeEndHandler = useCallback(
     (newNumber: number) => {
-      onChangeEnd?.(newNumber);
+      onChangeEnd(newNumber);
     },
     [onChangeEnd]
   );
   const onChangeHandler = useCallback(
     (newNumber: number) => {
-      onChange?.(newNumber);
+      onChange(newNumber);
     },
     [onChange]
   );

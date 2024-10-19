@@ -1,5 +1,3 @@
-// todo: add num disp option
-
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import {
   NumberField as AriaNumberField,
