@@ -24,6 +24,7 @@ import Button from './components/Button/Button';
 import IconButton from './components/IconButton/IconButton';
 import NumberField from './components/NumberField/NumberField';
 import Radio from './components/Radio/Radio';
+import RadioButton from './components/RadioButton/RadioButton';
 import Slider from './components/Slider/Slider';
 import Switch from './components/Switch/Switch';
 import ToggleButton from './components/ToggleButton/ToggleButton';
@@ -275,6 +276,12 @@ function App() {
 
   return (
     <>
+      <RadioButton
+        aria-labelledby={stepId}
+        radioItems={radioItemsRef.current}
+        value={`${state.swatchStep}`}
+        onChange={onChangeSwatchStepHandler}
+      />
       <Button
         buttontype="filled"
         label="Create"

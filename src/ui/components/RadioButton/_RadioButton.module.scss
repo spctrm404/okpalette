@@ -1,0 +1,229 @@
+@use 'sass:math';
+@use '../../styles/typography' as t;
+
+$size: 1.5rem;
+$border-thickness: 0.0625rem;
+$rad: 0.25rem;
+$icon-size-px: 16;
+$icon-size: math.div($icon-size-px, 16) * 1rem;
+$duration: 200ms;
+$easing: cubic-bezier(0.2, 0, 0, 1);
+
+.radio-button {
+  $root-selector: &;
+
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-template-columns: subgrid;
+  grid-auto-flow: column;
+  place-items: stretch stretch;
+  cursor: pointer;
+
+  &:not(:first-child)[data-button-type='outlined'] {
+    grid-column-end: span 2;
+
+    &::before {
+      display: block;
+      content: '';
+      background-color: var(--outline);
+    }
+  }
+
+  &__shape {
+    position: relative;
+    grid-row-end: span 1;
+    grid-column-end: span 1;
+
+    &--part {
+      &-bg {
+        z-index: 1;
+        transition: background-color $duration $easing;
+
+        @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+          background-color: transparent;
+
+          @at-root #{$root-selector}[data-selected]#{&} {
+            background-color: var(--inverse-surface);
+          }
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            background-color: transparent;
+
+            @at-root #{$root-selector}[data-selected]#{&} {
+              background-color: color-mix(
+                in oklch,
+                var(--on-surface) 12%,
+                transparent
+              );
+            }
+          }
+        }
+        @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
+          background-color: var(--surface-container-highest);
+
+          @at-root #{$root-selector}[data-selected]#{&} {
+            background-color: var(--secondary-container);
+          }
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            background-color: color-mix(
+              in oklch,
+              var(--on-surface) 12%,
+              transparent
+            );
+          }
+        }
+        @at-root #{$root-selector}[data-button-type='filled'] #{&} {
+          background-color: var(--surface-container-highest);
+
+          @at-root #{$root-selector}[data-selected]#{&} {
+            background-color: var(--primary);
+          }
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            background-color: color-mix(
+              in oklch,
+              var(--on-surface) 12%,
+              transparent
+            );
+          }
+        }
+      }
+    }
+  }
+
+  &__state {
+    position: relative;
+    z-index: 2;
+    grid-row-end: span 1;
+    grid-column-end: span 1;
+    opacity: 0;
+    transition: background-color $duration $easing, opacity $duration $easing,
+      transform $duration $easing;
+    transform: scale(0%, 100%);
+
+    @at-root #{$root-selector}[data-button-type='standard'] #{&} {
+      background-color: var(--on-surface-variant);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        background-color: var(--primary);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+      background-color: var(--on-surface-variant);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        background-color: var(--on-inverse-surface);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
+      background-color: var(--on-surface-variant);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        background-color: var(--on-secondary-container);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='filled'] #{&} {
+      background-color: var(--primary);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        background-color: var(--on-primary);
+      }
+    }
+
+    @at-root #{$root-selector}[data-hovered] #{&} {
+      opacity: 0.08;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-focused] #{&} {
+      opacity: 0.08;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-focus-visible] #{&} {
+      opacity: 0.08;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-pressed] #{&} {
+      opacity: 0.12;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-disabled] #{&} {
+      opacity: 0;
+      transform: scale(0%, 100%);
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-row-end: span 1;
+    grid-column-end: span 1;
+    place-items: center center;
+    transition: color $duration $easing;
+
+    @at-root #{$root-selector}[data-button-type='standard'] #{&} {
+      color: var(--on-surface-variant);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        color: var(--primary);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+      color: var(--on-surface-variant);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        color: var(--on-inverse-surface);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
+      color: var(--on-surface-variant);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        color: var(--on-secondary-container);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='filled'] #{&} {
+      color: var(--primary);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        color: var(--on-primary);
+      }
+    }
+
+    @at-root #{$root-selector}[data-disabled] #{&} {
+      color: color-mix(in oklch, var(--on-surface) 38%, transparent);
+
+      @at-root #{$root-selector}[data-selected]#{&} {
+        color: color-mix(in oklch, var(--on-surface) 38%, transparent);
+      }
+    }
+
+    &__text {
+      height: 1cap;
+      text-align: center;
+      white-space: nowrap;
+      transform: translateY(calc(-0.5 * (1lh - 1cap)));
+
+      @include t.apply-role('button');
+    }
+  }
+
+  &-group {
+    &__root {
+      display: grid;
+      grid-auto-columns: 1fr;
+      grid-auto-flow: column;
+      column-gap: $border-thickness;
+      place-items: stretch stretch;
+      height: $size;
+      overflow: hidden;
+      border-radius: $rad;
+
+      &[data-button-type='outlined'] {
+        grid-auto-columns: 1fr $border-thickness;
+        column-gap: 0;
+        border: $border-thickness solid var(--outline);
+      }
+    }
+  }
+}
