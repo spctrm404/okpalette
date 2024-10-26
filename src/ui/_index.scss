@@ -82,7 +82,7 @@ h6 {
 }
 
 input {
-  @include t.apply-role('number');
+  @include t.apply-role('value');
 }
 
 textarea,

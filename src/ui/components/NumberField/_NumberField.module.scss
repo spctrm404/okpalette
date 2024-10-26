@@ -1,12 +1,15 @@
+@use 'sass:math';
 @use '../../styles/typography' as t;
 
-$multiplier: 0.75;
-$button-height: 3rem * $multiplier;
-$button-shape-height: 2.5rem * $multiplier;
-$button-icon-size: 1.5rem;
-$px: 1rem * $multiplier;
-$pl-has-label: 0.75rem * $multiplier;
-$pr-has-label: 1rem * $multiplier;
+$button-height: 1.5rem;
+$button-shape-height: 1.5rem;
+$button-icon-size-px: 16;
+$button-icon-size: math.div($button-icon-size-px, 16) * 1rem;
+$px: 0.75rem;
+$pl-has-label: 0.5rem;
+$pr-has-label: 0.75rem;
+$gx: 0.125rem;
+$label-border-thickness: 0.0625rem;
 $rad: 0.25rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
@@ -18,6 +21,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     display: grid;
     grid-template-rows: 1fr $button-shape-height 1fr;
     grid-template-columns: min-content 1fr min-content;
+    column-gap: $gx;
     place-items: stretch stretch;
     width: min-content;
     height: $button-height;
@@ -60,7 +64,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     background-color: transparent;
     border: 0;
     transition: color $duration $easing;
-    @include t.apply-role('number');
+    @include t.apply-role('value');
 
     &:focus {
       outline: none;
@@ -92,15 +96,12 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       grid-template-columns: 1fr;
       grid-row: 2 / span 1;
       grid-column: 2 / span 1;
-      align-items: center;
-      padding-inline: $pl-has-label $pl-has-label - 0.0625rem;
-      padding-top: 0.0938rem;
+      place-items: center center;
+      padding-inline: $pl-has-label $pl-has-label - $label-border-thickness;
       color: var(--outline);
       cursor: pointer;
-      user-select: none;
-      border-right: 0.0625rem solid var(--outline-variant);
+      border-right: $label-border-thickness solid var(--outline-variant);
       transition: color $duration $easing, border-color $duration $easing;
-      @include t.apply-role('number-field-label');
 
       &:has(~ #{$parent-selector}[data-disabled]) {
         color: color-mix(in oklch, var(--on-surface) 38%, transparent);
@@ -110,6 +111,16 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
       @at-root #{$root-selector}[data-no-button] #{&} {
         grid-column: 1 / span 1;
+      }
+
+      &__text {
+        height: 1cap;
+        color: inherit;
+        cursor: inherit;
+        user-select: none;
+        transform: translateY(calc(-0.5 * (1lh - 1cap) + 0.0313rem));
+
+        @include t.apply-role('label-sm');
       }
     }
 
@@ -153,27 +164,21 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       opacity: 0;
       transition: background-color $duration $easing, opacity $duration $easing,
         transform $duration $easing;
-      transform: scale(0%, 100%);
 
       @at-root #{$parent-selector}[data-hovered] ~ #{&} {
         opacity: 0.08;
-        transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}__label:hover ~ #{&} {
         opacity: 0.08;
-        transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-focused] ~ #{&} {
         opacity: 0.08;
-        transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-focus-visible] ~ #{&} {
         opacity: 0.08;
-        transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-disabled] ~ #{&} {
         opacity: 0;
-        transform: scale(0%, 100%);
       }
 
       @at-root #{$root-selector}[data-has-label] #{&} {

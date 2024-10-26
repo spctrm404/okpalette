@@ -1,9 +1,11 @@
-$multiplier: 1;
-$size: 3rem * $multiplier;
-$shape-size: 2.5rem * $multiplier;
+@use 'sass:math';
+
+$size: 1.5rem;
+$shape-size: 1.5rem;
 $border-thickness: 0.0625rem;
 $rad: 0.25rem;
-$icon-size: 1.5rem;
+$icon-size-px: 16;
+$icon-size: math.div($icon-size-px, 16) * 1rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
 
@@ -94,7 +96,6 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     opacity: 0;
     transition: background-color $duration $easing, opacity $duration $easing,
       transform $duration $easing;
-    transform: scale(0%, 0%);
 
     @at-root #{$root-selector}[data-button-type='standard'] #{&} {
       background-color: var(--on-surface-variant);
@@ -114,23 +115,18 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
     @at-root #{$root-selector}[data-hovered] #{&} {
       opacity: 0.08;
-      transform: scale(100%, 100%);
     }
     @at-root #{$root-selector}[data-focused] #{&} {
       opacity: 0.08;
-      transform: scale(100%, 100%);
     }
     @at-root #{$root-selector}[data-focus-visible] #{&} {
       opacity: 0.08;
-      transform: scale(100%, 100%);
     }
     @at-root #{$root-selector}[data-pressed] #{&} {
       opacity: 0.12;
-      transform: scale(100%, 100%);
     }
     @at-root #{$root-selector}[data-disabled] #{&} {
       opacity: 0;
-      transform: scale(0%, 0%);
     }
   }
 
@@ -168,7 +164,8 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
     &__icon {
       font-size: $icon-size;
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0,
+        'opsz' $icon-size-px;
       line-height: $icon-size;
     }
   }

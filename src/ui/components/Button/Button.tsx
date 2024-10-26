@@ -52,7 +52,7 @@ const Button = ({
             {materialIcon}
           </div>
         )}
-        <div className={cx('button__content__text', 'button-label')}>
+        <div className={cx('button__content__text', 'button-text')}>
           {label}
         </div>
       </div>

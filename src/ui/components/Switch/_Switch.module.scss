@@ -1,15 +1,15 @@
-$multiplier: 1;
-$width: 3.25rem * $multiplier;
-$height: 2rem * $multiplier;
-$border-thickness: 0.125rem;
-$thumb-size: 3rem * $multiplier;
-$thumb-shape-size: 1rem * $multiplier;
-$thumb-shape-size-pressed: 1.75rem * $multiplier;
-$thumb-shape-size-true: 1.5rem * $multiplier;
-$thumb-state-size: 2.5rem * $multiplier;
-$thumb-rad: 0.125rem;
-$state-rad: 0.25rem;
+$width: 2.5rem;
+$height: 1.5rem;
+$border-thickness: 0.0625rem;
+$thumb-size: 1.5rem;
+$thumb-shape-size: 1rem;
+$thumb-shape-size-pressed: 1.375rem;
+$thumb-shape-size-true: 1.25rem;
+$thumb-state-size: 1.5rem;
 $track-rad: 0.25rem;
+$state-rad: 0.25rem;
+$thumb-rad: 0.125rem;
+$thumb-rad-pressed: $track-rad - $border-thickness;
 $icon-size: 1rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
@@ -124,7 +124,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       background-color: var(--outline);
       border-radius: $thumb-rad;
       transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing;
+        background-color $duration $easing, border-radius $duration $easing;
       transform: translate(-50%, -50%);
 
       &:has(#{$root-selector}__icon) {
@@ -164,6 +164,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         width: $thumb-shape-size-pressed;
         height: $thumb-shape-size-pressed;
         background-color: var(--on-surface-variant);
+        border-radius: $thumb-rad-pressed;
       }
       @at-root #{$root-selector}[data-disabled] #{&} {
         background-color: color-mix(

@@ -283,7 +283,7 @@ function App() {
       />
       <IconButton buttontype="filled" materialIcon="add" onPress={sendMsg} />
       <NumberField
-        label="Hb"
+        label="22"
         value={state.hues.from}
         minValue={0}
         maxValue={360}

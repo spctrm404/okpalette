@@ -83,11 +83,18 @@ const NumberField = ({
     >
       <AriaGroup className={cx('number-field__group', 'number-field-group')}>
         {label && (
-          <AriaLabel
+          <div
             className={cx('number-field__input__label', 'number-field-label')}
           >
-            {label}
-          </AriaLabel>
+            <AriaLabel
+              className={cx(
+                'number-field__input__label__text',
+                'number-field-label-text'
+              )}
+            >
+              {label}
+            </AriaLabel>
+          </div>
         )}
         <AriaInput
           className={cx('number-field__input', 'number-field-input')}

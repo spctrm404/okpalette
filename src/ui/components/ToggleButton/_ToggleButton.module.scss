@@ -1,9 +1,11 @@
-$multiplier: 1;
-$size: 3rem * $multiplier;
-$shape-size: 2.5rem * $multiplier;
+@use 'sass:math';
+
+$size: 1.5rem;
+$shape-size: 1.5rem;
 $border-thickness: 0.0625rem;
 $rad: 0.25rem;
-$icon-size: 1.5rem;
+$icon-size-px: 16;
+$icon-size: math.div($icon-size-px, 16) * 1rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
 
@@ -234,22 +236,26 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       grid-row: 1 / span 1;
       grid-column: 1 / span 1;
       font-size: $icon-size;
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0,
+        'opsz' $icon-size-px;
       line-height: $icon-size;
       transition: opacity $duration $easing,
         font-variation-settings $duration $easing;
 
       @at-root #{$root-selector}[data-selected] #{&} {
-        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0,
+          'opsz' $icon-size-px;
       }
 
       &--part {
         &-a {
           &:has(+ #{$parent-selector}--part-b) {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0,
+              'opsz' $icon-size-px;
             opacity: 1;
             @at-root #{$root-selector}[data-selected] #{&} {
-              font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+              font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0,
+                'opsz' $icon-size-px;
               opacity: 0;
             }
           }
@@ -257,10 +263,12 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
         &-b {
           @at-root #{$parent-selector}--part-a + #{&} {
-            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0,
+              'opsz' $icon-size-px;
             opacity: 0;
             @at-root #{$root-selector}[data-selected] #{&} {
-              font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+              font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0,
+                'opsz' $icon-size-px;
               opacity: 1;
             }
           }

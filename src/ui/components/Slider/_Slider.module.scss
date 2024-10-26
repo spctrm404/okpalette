@@ -1,16 +1,15 @@
-$multiplier: 1;
 $min-width: 6.25rem;
-$track-height: 1rem * $multiplier;
-$thumb-size: 3rem * $multiplier;
-$thumb-shape-height: 1.5rem * $multiplier;
-$thumb-shape-height-pressed: 1.75rem * $multiplier;
-$track-indicator-gap: 1rem;
+$track-height: 0.5rem;
+$thumb-size: 1rem;
+$thumb-shape-height: 0.5rem;
+$thumb-shape-height-pressed: 0.75rem;
+$track-indicator-gap: 0.5rem;
 $track-rad-l: 0.25rem;
 $track-rad-s: 0.125rem;
-$thumb-shape-width: 0.25rem;
+$thumb-shape-width: 0.125rem;
 $thumb-shape-width-pressed: 0.125rem;
 $thumb-shape-rad: 0.125rem;
-$state-width: 2.5rem * $multiplier;
+$state-width: 1rem;
 $state-height: $state-width;
 $state-rad: 0.25rem;
 $duration: 200ms;
@@ -124,22 +123,22 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     }
     @at-root #{$root-selector}[data-orientation='horizontal'][data-thumb-pos='top']
         #{&} {
-      top: calc(50% - 0.5 * ($thumb-shape-height - $track-height));
+      top: calc(50% - 0.5 * $thumb-shape-height);
     }
     @at-root #{$root-selector}[data-orientation='horizontal'][data-thumb-pos='bottom']
         #{&} {
-      top: calc(50% + 0.5 * ($thumb-shape-height - $track-height));
+      top: calc(50% + 0.5 * $thumb-shape-height);
     }
     @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
       left: 50%;
     }
     @at-root #{$root-selector}[data-orientation='vertical'][data-thumb-pos='left']
         #{&} {
-      left: calc(50% - 0.5 * ($thumb-shape-height - $track-height));
+      left: calc(50% - 0.5 * $thumb-shape-height);
     }
     @at-root #{$root-selector}[data-orientation='vertical'][data-thumb-pos='right']
         #{&} {
-      left: calc(50% + 0.5 * ($thumb-shape-height - $track-height));
+      left: calc(50% + 0.5 * $thumb-shape-height);
     }
 
     @at-root #{$root-selector}[data-disabled] #{&} {

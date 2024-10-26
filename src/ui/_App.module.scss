@@ -41,7 +41,7 @@ body {
 
 .section-label {
   color: var(--on-surface);
-  @include t.apply-role('section-label');
+  @include t.apply-role('label');
 }
 
 .section {
