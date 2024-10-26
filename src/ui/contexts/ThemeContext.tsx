@@ -46,102 +46,103 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const vividsLightnessRef = useRef<ThemeLightness>({
     name: {
-      light: 0.4,
-      dark: 0.82, // apca -66
+      light: 0.41,
+      dark: 0.94,
     },
     onName: {
-      light: 1,
-      dark: 0.29, // apca 66
+      light: 0.98,
+      dark: 0.28,
     },
     nameContainer: {
-      light: 0.9,
-      dark: 0.35, // apca 0 - 5step
+      light: 0.93,
+      dark: 0.43,
     },
     onNameContainer: {
-      light: 0.1,
-      dark: 0.92, // apca -82
+      light: 0.42,
+      dark: 0.92,
     },
     nameFixed: {
-      light: 0.9,
-      dark: 0.92, // apca -86
+      light: 0.91,
+      dark: 0.91,
     },
     onNameFixed: {
-      light: 0.1,
-      dark: 0.26, // apca 86
+      light: 0.26,
+      dark: 0.26,
     },
     nameFixedDim: {
-      light: 0.8,
-      dark: 0.82, // apca -66
+      light: 0.83,
+      dark: 0.83,
     },
-    onNameFixedDim: {
-      light: 0.3,
-      dark: 0.35, // apca 62
+    onNameFixedVariant: {
+      light: 0.39,
+      dark: 0.39,
     },
     inverseName: {
-      light: 0.8,
-      dark: 0.43, // apca -16
+      light: 0.87,
+      dark: 0.51,
+    },
+    onInverseName: {
+      light: 0.3,
+      dark: 0.96,
     },
   });
   const neutralsLightnessRef = useRef<ThemeLightness>({
     surface: {
       light: 0.98,
-      dark: 0.23, // +17
+      dark: 0.33,
     },
     onSurface: {
-      light: 0.1,
-      dark: 0.91, // apca -87
+      light: 0.25,
+      dark: 0.99,
     },
     surfaceContainerHighest: {
-      light: 0.9,
-      dark: 0.39, // +17
+      light: 0.91,
+      dark: 0.48,
     },
     surfaceContainerHigh: {
       light: 0.92,
-      dark: 0.34, // +17
+      dark: 0.45,
     },
     surfaceContainer: {
       light: 0.94,
-      dark: 0.29, // +17
+      dark: 0.41,
     },
     surfaceContainerLow: {
       light: 0.96,
-      dark: 0.27, // +17
+      dark: 0.37,
     },
     surfaceContainerLowest: {
       light: 1,
-      dark: 0.21, // +17
+      dark: 0.29,
     },
     inverseSurface: {
-      light: 0.2,
-      dark: 0.92, // apca -86
+      light: 0.3,
+      dark: 0.98,
     },
-    inverseOnSurface: {
-      light: 0.95,
-      dark: 0.29, // apca 85
+    onInverseSurface: {
+      light: 0.94,
+      dark: 0.37,
     },
     surfaceTint: {
-      light: 0.4,
-      dark: 0.82, // apca -67
+      light: 0.41,
+      dark: 0.94,
     },
-    outline: {
-      light: 0.5,
-      dark: 0.63, // apca -35
-    },
+
     bg: {
-      light: 0.98,
-      dark: 0.23, // +17
+      light: 1,
+      dark: 0.29,
     },
     onBg: {
-      light: 0.1,
-      dark: 0.91, // apca -87
+      light: 0.25,
+      dark: 0.99,
     },
     surfaceBright: {
       light: 0.98,
-      dark: 0.41, // +17
+      dark: 0.53,
     },
     surfaceDim: {
-      light: 0.87,
-      dark: 0.21, // +17
+      light: 0.88,
+      dark: 0.33,
     },
     scrim: {
       light: 0,
@@ -154,16 +155,20 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const neutralVariantsLightnessRef = useRef<ThemeLightness>({
     surfaceVariant: {
-      light: 0.9,
-      dark: 0.35, // apca 0 - 5step
+      light: 0.91,
+      dark: 0.48,
     },
     onSurfaceVariant: {
-      light: 0.3,
-      dark: 0.82, // apca -63
+      light: 0.38,
+      dark: 0.95,
+    },
+    outline: {
+      light: 0.62,
+      dark: 0.8,
     },
     outlineVariant: {
-      light: 0.8,
-      dark: 0.35, // apca -0 - 5step
+      light: 0.81,
+      dark: 0.61,
     },
   });
 

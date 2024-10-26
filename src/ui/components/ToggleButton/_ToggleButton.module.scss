@@ -140,7 +140,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       background-color: var(--on-surface-variant);
 
       @at-root #{$root-selector}[data-selected]#{&} {
-        background-color: var(--inverse-on-surface);
+        background-color: var(--on-inverse-surface);
       }
     }
     @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
@@ -202,7 +202,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       color: var(--on-surface-variant);
 
       @at-root #{$root-selector}[data-selected]#{&} {
-        color: var(--inverse-on-surface);
+        color: var(--on-inverse-surface);
       }
     }
     @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
