@@ -92,8 +92,8 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
       dark: 0.33,
     },
     onSurface: {
-      light: 0.25,
-      dark: 0.99,
+      light: 0.39,
+      dark: 0.95,
     },
     surfaceContainerHighest: {
       light: 0.91,
@@ -159,8 +159,8 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
       dark: 0.48,
     },
     onSurfaceVariant: {
-      light: 0.38,
-      dark: 0.95,
+      light: 0.52,
+      dark: 0.87,
     },
     outline: {
       light: 0.62,

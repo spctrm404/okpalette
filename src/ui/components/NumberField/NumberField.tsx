@@ -78,7 +78,12 @@ const NumberField = ({
       onChange={onChangeHandler}
       {...(label && { 'data-has-label': true })}
       {...(noButton && { 'data-no-button': noButton })}
-      style={{ '--min-ch': digitLength() } as React.CSSProperties}
+      style={
+        {
+          '--min-ch': digitLength(),
+          '--labal-ch': label ? label.length : 0,
+        } as React.CSSProperties
+      }
       {...props}
     >
       <AriaGroup className={cx('number-field__group', 'number-field-group')}>
