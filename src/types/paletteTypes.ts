@@ -32,3 +32,8 @@ export type ApcaMatrix = {
   palette: Palette;
   matrix: Matrix;
 };
+
+export type Constraint = {
+  colour: { sRgb: RGB; dispP3: RGB; gamut: 'sRGB' | 'Display P3' };
+  constraining: boolean;
+};

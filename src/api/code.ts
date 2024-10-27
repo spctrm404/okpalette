@@ -14,8 +14,8 @@ import {
 import { formatDigits } from '../utils/stringUtils';
 
 const PX = 12;
-const WIDTH = 250;
-const HEIGHT = 900; // 742
+const WIDTH = 200;
+const HEIGHT = 526;
 
 const PALETTE_PX = 24;
 const PALETTE_PY = 24;
@@ -404,6 +404,18 @@ figma.ui.onmessage = ({ type, data }: FigmaMessage) => {
         figma.currentPage.appendChild(paletteFrame);
         const matrixFrame = createMatrix(apcaMatrix);
         figma.currentPage.appendChild(matrixFrame);
+        nodes.push(paletteFrame);
+      })
+      .catch((err) => {
+        console.error('Error on loading fonts: ', err);
+      });
+  } else if (type === 'create-palette') {
+    Promise.all(fontNames.map((fontName) => figma.loadFontAsync(fontName)))
+      .then(() => {
+        const palette = data.palette;
+        const nodes: SceneNode[] = [];
+        const paletteFrame = createPalette(palette);
+        figma.currentPage.appendChild(paletteFrame);
         nodes.push(paletteFrame);
       })
       .catch((err) => {

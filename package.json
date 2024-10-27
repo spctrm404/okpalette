@@ -1,6 +1,6 @@
 {
   "name": "okpalette",
-  "version": "0.3.0",
+  "version": "0.9.0",
   "description": "A Figma plugin that generates tonal palettes based on the okLCh color space.",
   "type": "module",
   "scripts": {

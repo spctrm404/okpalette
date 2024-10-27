@@ -1,6 +1,6 @@
 import { FigmaMessage, FigmaDocumentColorSpace } from '../types/figmaTypes';
 import { Matrix, XY } from '../types/commonTypes';
-import { Hues, PaletteParam } from '../types/paletteTypes';
+import { Hues, PaletteParam, Constraint } from '../types/paletteTypes';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
@@ -36,46 +36,34 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 type State = {
-  isHueRanged: boolean;
-  showDetail: boolean;
-  createApcaTable: boolean;
-} & PaletteParam;
+  isHueSynced: boolean;
+  creatingApcaTable: boolean;
+} & PaletteParam &
+  Constraint;
 
 type Action =
   | {
       type: 'setNumber';
       payload: {
-        field: keyof Omit<
-          State,
-          'isHueRanged' | 'showDetail' | 'createApcaTable' | 'hues'
-        >;
+        field: keyof Omit<State, 'isHueSynced' | 'creatingApcaTable' | 'hues'>;
         value: number;
       };
     }
   | {
       type: 'setNumbers';
       payload: Array<{
-        field: keyof Omit<
-          State,
-          'isHueRanged' | 'showDetail' | 'createApcaTable' | 'hues'
-        >;
+        field: keyof Omit<State, 'isHueSynced' | 'creatingApcaTable' | 'hues'>;
         value: number;
       }>;
     }
   | {
       type: 'toggleBoolean';
-      payload: keyof Pick<
-        State,
-        'isHueRanged' | 'showDetail' | 'createApcaTable'
-      >;
+      payload: keyof Pick<State, 'isHueSynced' | 'creatingApcaTable'>;
     }
   | {
       type: 'setBoolean';
       payload: {
-        field: keyof Pick<
-          State,
-          'isHueRanged' | 'showDetail' | 'createApcaTable'
-        >;
+        field: keyof Pick<State, 'isHueSynced' | 'creatingApcaTable'>;
         value: boolean;
       };
     }
@@ -146,10 +134,15 @@ function App() {
     swatchStep: 10,
     peakLightness: 0.5,
     peakChroma: 0.11,
-    isHueRanged: false,
+    isHueSynced: true,
     hues: { from: 0, to: 0 },
-    showDetail: true,
-    createApcaTable: true,
+    creatingApcaTable: true,
+    colour: {
+      sRgb: { r: 255, g: 255, b: 255 },
+      dispP3: { r: 1, g: 1, b: 1 },
+      gamut: 'sRGB',
+    },
+    constraining: false,
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -159,7 +152,7 @@ function App() {
   const sendMsg = () => {
     console.log('state', state);
     const palette = createPalette(state);
-    if (state.createApcaTable) {
+    if (state.creatingApcaTable) {
       const apcaMatrix = createApcaMatrix(palette, documentColorSpace);
       parent.postMessage(
         {
@@ -204,34 +197,73 @@ function App() {
       payload: { field: 'peakChroma', value: newNumber },
     });
   }, []);
-  const onChangeHueRangedHandler = useCallback((newBoolean: boolean) => {
-    dispatch({
-      type: 'setBoolean',
-      payload: { field: 'isHueRanged', value: newBoolean },
-    });
-  }, []);
-  const onChangeHueFromHandler = useCallback((newNumber: number) => {
-    dispatch({
-      type: 'setHue',
-      payload: {
-        field: 'from',
-        value: newNumber,
-      },
-    });
-  }, []);
-  const onChangeHueToHandler = useCallback((newNumber: number) => {
-    dispatch({
-      type: 'setHue',
-      payload: {
-        field: 'to',
-        value: newNumber,
-      },
-    });
-  }, []);
+  const onChangeHueSyncedHandler = useCallback(
+    (newBoolean: boolean) => {
+      dispatch({
+        type: 'setBoolean',
+        payload: { field: 'isHueSynced', value: newBoolean },
+      });
+      if (newBoolean)
+        dispatch({
+          type: 'setHue',
+          payload: {
+            field: 'to',
+            value: state.hues.from,
+          },
+        });
+    },
+    [state.hues.from]
+  );
+  const onChangeHueFromHandler = useCallback(
+    (newNumber: number) => {
+      dispatch({
+        type: 'setHue',
+        payload: {
+          field: 'from',
+          value: newNumber,
+        },
+      });
+      if (state.isHueSynced)
+        dispatch({
+          type: 'setHue',
+          payload: {
+            field: 'to',
+            value: newNumber,
+          },
+        });
+    },
+    [state.isHueSynced]
+  );
+  const onChangeHueToHandler = useCallback(
+    (newNumber: number) => {
+      dispatch({
+        type: 'setHue',
+        payload: {
+          field: 'to',
+          value: newNumber,
+        },
+      });
+      if (state.isHueSynced)
+        dispatch({
+          type: 'setHue',
+          payload: {
+            field: 'from',
+            value: newNumber,
+          },
+        });
+    },
+    [state.isHueSynced]
+  );
   const onChangeSwatchStepHandler = useCallback((newString: string) => {
     dispatch({
       type: 'setNumber',
       payload: { field: 'swatchStep', value: parseInt(newString) },
+    });
+  }, []);
+  const onChangeApcaOptHandler = useCallback((newBoolean: boolean) => {
+    dispatch({
+      type: 'setBoolean',
+      payload: { field: 'creatingApcaTable', value: newBoolean },
     });
   }, []);
 
@@ -252,375 +284,189 @@ function App() {
 
     return () => window.removeEventListener('message', messageHandler);
   }, []);
-  useLayoutEffect(() => {
-    if (!state.isHueRanged)
-      dispatch({
-        type: 'setHue',
-        payload: {
-          field: 'to',
-          value: state.hues.from,
-        },
-      });
-  }, [state.isHueRanged, state.hues.from]);
+  // useLayoutEffect(() => {
+  //   if (!state.isHueSynced)
+  //     dispatch({
+  //       type: 'setHue',
+  //       payload: {
+  //         field: 'to',
+  //         value: state.hues.from,
+  //       },
+  //     });
+  // }, [state.isHueSynced, state.hues.from]);
   useLayoutEffect(() => {
     setHues?.(state.hues);
   }, [state.hues]);
 
-  const hueRangedId = useId();
-  const hueFromId = useId();
-  const hueToId = useId();
+  const hueId = useId();
   const lcId = useId();
-  const lId = useId();
-  const cId = useId();
   const stepId = useId();
+  const apcaId = useId();
 
   return (
     <>
-      <RadioButton
-        aria-labelledby={stepId}
-        radioItems={radioItemsRef.current}
-        value={`${state.swatchStep}`}
-        onChange={onChangeSwatchStepHandler}
-      />
-      <Button
-        buttontype="filled"
-        label="Create"
-        materialIcon="menu"
-        onPress={sendMsg}
-      />
-      <IconButton buttontype="filled" materialIcon="add" onPress={sendMsg} />
-      <NumberField
-        label="22"
-        value={state.hues.from}
-        minValue={0}
-        maxValue={360}
-        step={HUE_STEP}
-        onChange={onChangeHueFromHandler}
-        formatOptions={{
-          minimumIntegerDigits: 3,
-        }}
-      />
-      <NumberField
-        label="He"
-        value={state.hues.to}
-        minValue={0}
-        maxValue={360}
-        step={HUE_STEP}
-        onChange={onChangeHueToHandler}
-        noButton={true}
-        isDisabled={!state.isHueRanged}
-        formatOptions={{
-          minimumIntegerDigits: 3,
-        }}
-      />
-      <Slider
-        aria-labelledby={hueRangedId}
-        thumbPos="bottom"
-        value={state.hues.from}
-        minValue={0}
-        maxValue={360}
-        step={HUE_STEP}
-        onChange={onChangeHueFromHandler}
-        onChangeEnd={onChangeHueFromHandler}
-      />
-      <Slider
-        aria-labelledby={hueRangedId}
-        thumbPos="right"
-        value={state.hues.to}
-        minValue={0}
-        maxValue={360}
-        step={HUE_STEP}
-        onChange={onChangeHueToHandler}
-        onChangeEnd={onChangeHueToHandler}
-        orientation={'vertical'}
-        isDisabled={!state.isHueRanged}
-      />
-      <Switch
-        aria-labelledby={hueRangedId}
-        isSelected={state.isHueRanged}
-        onChange={onChangeHueRangedHandler}
-      />
-      <ToggleButton
-        aria-labelledby={hueRangedId}
-        isSelected={state.isHueRanged}
-        materialIcon="toggle_off"
-        materialIconAlt="toggle_on"
-        onChange={onChangeHueRangedHandler}
-      />
-      <XYSlider
-        aria-labelledby={lcId}
-        minValue={{ x: 0, y: 0 }}
-        maxValue={{ x: 1, y: DISP_P3_CHROMA_LIMIT }}
-        step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-        value={{
-          x: state.peakLightness,
-          y: state.peakChroma,
-        }}
-        onChangeEnd={onChangeLightnessAndChromaHandler}
-        onChange={onChangeLightnessAndChromaHandler}
-      />
-      <NumberField
-        label="L"
-        value={state.peakLightness}
-        minValue={0}
-        maxValue={1}
-        step={LIGHTNESS_STEP}
-        onChange={onChangeLightnessHandler}
-        noButton={true}
-        formatOptions={{
-          minimumIntegerDigits: 1,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }}
-      />
-      <NumberField
-        label="C"
-        value={state.peakChroma}
-        minValue={0}
-        maxValue={DISP_P3_CHROMA_LIMIT}
-        step={CHROMA_STEP}
-        onChange={onChangeChromaHandler}
-        noButton={true}
-        formatOptions={{
-          minimumIntegerDigits: 1,
-          minimumFractionDigits: 3,
-          maximumFractionDigits: 3,
-        }}
-      />
+      <div className={cx('section', 'document-info')}>
+        <div className={cx('label', 'document-info__label')}>
+          Document's Color Space:
+        </div>
+        <div className={cx('value', 'document-info__value')}>
+          {documentColorSpace == 'DISPLAY_P3' && 'Display P3'}
+          {documentColorSpace == 'SRGB' && 'sRGB'}
+          {documentColorSpace == 'LEGACY' && 'Legacy'}
+        </div>
+      </div>
+      <div className={cx('section', 'hue')}>
+        <div className={cx('label', 'hue__label')} id={hueId}>
+          Hue
+        </div>
+        <div className={cx('sliders', 'hue__sliders')}>
+          <div className={cx('hue__gradient')}></div>
+          <Slider
+            aria-labelledby={hueId}
+            thumbPos="top"
+            className={cx('hue__slider', 'hue__slider-from')}
+            value={state.hues.from}
+            minValue={0}
+            maxValue={360}
+            step={HUE_STEP}
+            onChange={onChangeHueFromHandler}
+            onChangeEnd={onChangeHueFromHandler}
+          />
+          <Slider
+            aria-labelledby={hueId}
+            thumbPos="bottom"
+            className={cx('hue__slider', 'hue__slider-to')}
+            value={state.hues.to}
+            minValue={0}
+            maxValue={360}
+            step={HUE_STEP}
+            onChange={onChangeHueToHandler}
+            onChangeEnd={onChangeHueToHandler}
+          />
+        </div>
+        <div className={cx('numberfields', 'hue__numberfields')}>
+          <NumberField
+            label="Hs"
+            className={cx('hue__number-field', 'hue__number-field-from')}
+            value={state.hues.from}
+            minValue={0}
+            maxValue={360}
+            step={HUE_STEP}
+            onChange={onChangeHueFromHandler}
+            noButton={true}
+          />
+          <NumberField
+            label="He"
+            className={cx('hue__number-field', 'hue__number-field-to')}
+            value={state.hues.to}
+            minValue={0}
+            maxValue={360}
+            step={HUE_STEP}
+            onChange={onChangeHueToHandler}
+            noButton={true}
+          />
+          <ToggleButton
+            aria-labelledby={hueId}
+            buttontype="tonal"
+            className={cx('hue__toggle')}
+            isSelected={state.isHueSynced}
+            materialIcon="link_off"
+            materialIconAlt="link"
+            onChange={onChangeHueSyncedHandler}
+          />
+        </div>
+      </div>
+      <div className={cx('section', 'lc')}>
+        <div className={cx('label', 'lc__label')} id={lcId}>
+          Lightness & Chroma
+        </div>
+        <div className={cx('sliders', 'lc__sliders')}>
+          <WebGl
+            className={cx('lc__gamut')}
+            documentColorSpace={documentColorSpace}
+            peakLightness={state.peakLightness}
+            peakChroma={state.peakLightness}
+            hues={state.hues}
+          />
+          <XYSlider
+            aria-labelledby={lcId}
+            className={cx('lc__xy-slider')}
+            minValue={{ x: 0, y: 0 }}
+            maxValue={{ x: 1, y: DISP_P3_CHROMA_LIMIT }}
+            step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
+            value={{
+              x: state.peakLightness,
+              y: state.peakChroma,
+            }}
+            onChangeEnd={onChangeLightnessAndChromaHandler}
+            onChange={onChangeLightnessAndChromaHandler}
+          />
+        </div>
+        <div className={cx('numberfields', 'lc__numberfields')}>
+          <NumberField
+            label="L"
+            className={cx('lc__number-field', 'lc__number-field-l')}
+            value={state.peakLightness}
+            minValue={0}
+            maxValue={1}
+            step={LIGHTNESS_STEP}
+            onChange={onChangeLightnessHandler}
+            noButton={true}
+          />
+          <NumberField
+            label="C"
+            className={cx('lc__number-field', 'lc__number-field-c')}
+            value={state.peakChroma}
+            minValue={0}
+            maxValue={DISP_P3_CHROMA_LIMIT}
+            step={CHROMA_STEP}
+            onChange={onChangeChromaHandler}
+            noButton={true}
+          />
+        </div>
+      </div>
+      <div className={cx('section', 'swatch-step')}>
+        <div className={cx('label', 'swatch-step__label')} id={stepId}>
+          Swatch step
+        </div>
+        <RadioButton
+          aria-labelledby={stepId}
+          buttontype="tonal"
+          className={cx('radio-button', 'swatch-step__radio-button')}
+          radioItems={radioItemsRef.current}
+          value={`${state.swatchStep}`}
+          onChange={onChangeSwatchStepHandler}
+        />
+      </div>
+      <div className={cx('section', 'apca-opt')}>
+        <div className={cx('label', 'apca-opt__label')} id={apcaId}>
+          Create APCA Matrix
+        </div>
+        <Switch
+          aria-labelledby={apcaId}
+          className={cx('apca-opt__switch')}
+          isSelected={state.creatingApcaTable}
+          onChange={onChangeApcaOptHandler}
+        />
+      </div>
+      <div className={cx('section', 'create')}>
+        <Button
+          className={cx('button', 'create__button')}
+          buttontype="filled"
+          label="Create Palette"
+          onPress={sendMsg}
+        />
+      </div>
+      {/* <div>
+        <p>swatchStep: {state.swatchStep}</p>
+        <p>peakLightness: {state.peakLightness}</p>
+        <p>peakChroma: {state.peakChroma}</p>
+        <p>isHueSynced: {state.isHueSynced ? 'true' : 'false'}</p>
+        <p>hues.from: {state.hues.from}</p>
+        <p>hues.to: {state.hues.to}</p>
+        <p>creatingApcaTable: {state.creatingApcaTable ? 'true' : 'false'}</p>
+      </div> */}
     </>
-    // <>
-    //   <div className={cx('section', 'doc-color')}>
-    //     <div className={cx('label', 'doc-color__label')}>
-    //       Document's Color Space:
-    //     </div>
-    //     <div className={cx('value', 'doc-color__value')}>
-    //       {documentColorSpace == 'DISPLAY_P3' && 'Display P3'}
-    //       {documentColorSpace == 'SRGB' && 'sRGB'}
-    //       {documentColorSpace == 'LEGACY' && 'Legacy'}
-    //     </div>
-    //   </div>
-    //   <div className={cx('divider')}></div>
-    //   <div className={cx('section', 'h')}>
-    //     <div className={cx('section-label', 'h__section-label')}>Hue</div>
-    //     <div className={cx('part', 'h__part', 'h__part--switch')}>
-    //       <div className={cx('label', 'h__label')} id={hueRangedId}>
-    //         Ranged:
-    //       </div>
-    //       <Switch
-    //         aria-labelledby={hueRangedId}
-    //         className={cx('h__switch')}
-    //         isSelected={state.isHueRanged}
-    //         onChange={onChangeHueRangedHandler}
-    //       />
-    //     </div>
-    //     <div className={cx('part', 'h__part', 'h__part--slider')}>
-    //       <Slider
-    //         aria-labelledby={hueFromId}
-    //         className={cx('h__slider', 'h__slider--from')}
-    //         value={state.hues.from}
-    //         minValue={0}
-    //         maxValue={360}
-    //         step={HUE_STEP}
-    //         onChange={onChangeHueFromHandler}
-    //         onChangeEnd={onChangeHueFromHandler}
-    //       />
-    //       <Slider
-    //         aria-labelledby={hueToId}
-    //         className={cx('h__slider', 'h__slider--to')}
-    //         isDisabled={!state.isHueRanged}
-    //         value={state.hues.to}
-    //         minValue={0}
-    //         maxValue={360}
-    //         step={HUE_STEP}
-    //         onChange={onChangeHueToHandler}
-    //         onChangeEnd={onChangeHueToHandler}
-    //       />
-    //       <div className={cx('h__gamut')}></div>
-    //     </div>
-    //     <div
-    //       className={cx(
-    //         'part--number-field',
-    //         'part',
-    //         'h__part',
-    //         'h__part--number-field'
-    //       )}
-    //     >
-    //       <div className={cx('number-field-group', 'h__number-field-group')}>
-    //         <div className={cx('label', 'h__label')} id={hueFromId}>
-    //           From:
-    //         </div>
-    //         <NumberField
-    //           aria-labelledby={hueFromId}
-    //           className={cx('h__number-field', 'h__number-field--from')}
-    //           value={state.hues.from}
-    //           minValue={0}
-    //           maxValue={360}
-    //           step={HUE_STEP}
-    //           onChange={onChangeHueFromHandler}
-    //           noButton={true}
-    //         />
-    //       </div>
-    //       <div className={cx('number-field-group', 'h__number-field-group')}>
-    //         <div className={cx('label', 'h__label')} id={hueToId}>
-    //           To:
-    //         </div>
-    //         <NumberField
-    //           aria-labelledby={hueToId}
-    //           className={cx('h__number-field', 'h__number-field--to')}
-    //           isDisabled={!state.isHueRanged}
-    //           value={state.hues.to}
-    //           minValue={0}
-    //           maxValue={360}
-    //           step={HUE_STEP}
-    //           onChange={onChangeHueToHandler}
-    //           noButton={true}
-    //         />
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className={cx('divider')}></div>
-    //   <div className={cx('section', 'l-c')}>
-    //     <div className={cx('section-label', 'l-c__section-label')} id={lcId}>
-    //       Lightness & Chroma
-    //     </div>
-    //     <div className={cx('part', 'l-c__part', 'l-c__part--xy-slider')}>
-    //       <WebGl
-    //         className={cx('l-c__gamut')}
-    //         documentColorSpace={documentColorSpace}
-    //         peakLightness={state.peakLightness}
-    //         peakChroma={state.peakLightness}
-    //         hues={state.hues}
-    //       />
-    //       <XYSlider
-    //         aria-labelledby={lcId}
-    //         className={cx('l-c__xy-slider')}
-    //         minValue={{ x: 0, y: 0 }}
-    //         maxValue={{ x: 1, y: DISP_P3_CHROMA_LIMIT }}
-    //         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-    //         value={{
-    //           x: state.peakLightness,
-    //           y: state.peakChroma,
-    //         }}
-    //         onChangeEnd={onChangeLightnessAndChromaHandler}
-    //         onChange={onChangeLightnessAndChromaHandler}
-    //       />
-    //     </div>
-    //     <div
-    //       className={cx(
-    //         'part--number-field',
-    //         'part',
-    //         'l-c__part',
-    //         'l-c__part--number-field'
-    //       )}
-    //     >
-    //       <div className={cx('number-field-group', 'l__number-field-group')}>
-    //         <div className={cx('label', 'l__label')} id={lId}>
-    //           Lightness:
-    //         </div>
-    //         <NumberField
-    //           aria-labelledby={lId}
-    //           className={cx('l-c__number-field', 'l-c__number-field--l')}
-    //           value={state.peakLightness}
-    //           minValue={0}
-    //           maxValue={1}
-    //           step={LIGHTNESS_STEP}
-    //           onChange={onChangeLightnessHandler}
-    //           noButton={true}
-    //         />
-    //       </div>
-    //       <div className={cx('number-field-group', 'l__number-field-group')}>
-    //         <div className={cx('label', 'l__label')} id={cId}>
-    //           Chroma:
-    //         </div>
-    //         <NumberField
-    //           aria-labelledby={cId}
-    //           className={cx('l-c__number-field', 'l-c__number-field--c')}
-    //           value={state.peakChroma}
-    //           minValue={0}
-    //           maxValue={DISP_P3_CHROMA_LIMIT}
-    //           step={CHROMA_STEP}
-    //           onChange={onChangeChromaHandler}
-    //           noButton={true}
-    //         />
-    //       </div>
-    //     </div>
-    //   </div>
-    //   <div className={cx('divider')}></div>
-    //   <div className={cx('section', 'input')}>
-    //     <div
-    //       className={cx('section-label', 'input__section-label')}
-    //       // id={stepId}
-    //     >
-    //       RGB to okLCh
-    //     </div>
-    //     <div className={cx('part', 'input__part')}>
-    //       <div className={cx('input__swatch')}></div>
-    //       <NumberField
-    //         // aria-labelledby={cId}
-    //         className={cx('input__number-field', 'input__number-field--r')}
-    //         value={0}
-    //         minValue={0}
-    //         maxValue={255}
-    //         step={1}
-    //         onChange={() => {}}
-    //         noButton={true}
-    //       />
-    //       <NumberField
-    //         // aria-labelledby={cId}
-    //         className={cx('input__number-field', 'input__number-field--g')}
-    //         value={0}
-    //         minValue={0}
-    //         maxValue={255}
-    //         step={1}
-    //         onChange={() => {}}
-    //         noButton={true}
-    //       />
-    //       <NumberField
-    //         // aria-labelledby={cId}
-    //         className={cx('input__number-field', 'input__number-field--b')}
-    //         value={0}
-    //         minValue={0}
-    //         maxValue={255}
-    //         step={1}
-    //         onChange={() => {}}
-    //         noButton={true}
-    //       />
-    //     </div>
-    //   </div>
-    //   <div className={cx('divider')}></div>
-    //   <div className={cx('section', 'step')}>
-    //     <div className={cx('section-label', 'step__section-label')} id={stepId}>
-    //       Swatch Step
-    //     </div>
-    //     <div className={cx('part', 'step__part')}>
-    //       <Radio
-    //         aria-labelledby={stepId}
-    //         className={cx('step__radio')}
-    //         radioItems={radioItemsRef.current}
-    //         value={`${state.swatchStep}`}
-    //         onChange={onChangeSwatchStepHandler}
-    //         orientation="horizontal"
-    //       />
-    //     </div>
-    //   </div>
-    //   <div className={cx('divider')}></div>
-    //   <div className={cx('section', 'button')}>
-    //     <div className={cx('part', 'button__part')}>
-    //       {/* <IconButton
-    //         className={cx('button__option')}
-    //         buttontype="tonal"
-    //         materialIcon="settings"
-    //         onPress={() => {}}
-    //       /> */}
-    //       <Button
-    //         className={cx('button__create')}
-    //         buttontype="filled"
-    //         text="Create"
-    //         onPress={sendMsg}
-    //       />
-    //     </div>
-    //   </div>
-    // </>
   );
 }
 

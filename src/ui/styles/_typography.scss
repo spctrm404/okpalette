@@ -5,7 +5,6 @@ $scale: (
     font-size: 0.625rem,
     line-height: 1rem,
   ),
-
   xs: (
     font-size: 0.6875rem,
     line-height: 1rem,
@@ -61,7 +60,16 @@ $role: (
     font-weight: 400,
     line-height: 100%,
   ),
-  label-sm: (
+  label-xxs: (
+    scale: 'xxs',
+    font-family: (
+      'Roboto',
+      sans-serif,
+    ),
+    font-weight: 500,
+    line-height: 100%,
+  ),
+  label-sm-condensed: (
     scale: 'sm',
     font-family: (
       'Roboto Condensed',
@@ -70,13 +78,22 @@ $role: (
     font-weight: 600,
     line-height: 100%,
   ),
+  label-sm: (
+    scale: 'sm',
+    font-family: (
+      'Roboto',
+      sans-serif,
+    ),
+    font-weight: 500,
+    line-height: 100%,
+  ),
   label: (
     scale: 'md',
     font-family: (
       'Roboto',
       sans-serif,
     ),
-    font-weight: 600,
+    font-weight: 500,
     line-height: 100%,
   ),
 );

@@ -26,7 +26,6 @@ const Radio = ({
 }: RadioProps) => {
   const onChangeHandler = useCallback(
     (newString: string) => {
-      console.log('component', newString);
       onChange?.(newString);
     },
     [onChange]

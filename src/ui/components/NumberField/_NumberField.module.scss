@@ -123,7 +123,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         user-select: none;
         transform: translateY(calc(-0.5 * (1lh - 1cap) + 0.0313rem));
 
-        @include t.apply-role('label-sm');
+        @include t.apply-role('label-sm-condensed');
       }
     }
 
