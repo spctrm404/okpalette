@@ -137,7 +137,7 @@ function App() {
     peakChroma: 0.11,
     isHueSynced: true,
     hues: { from: 0, to: 0 },
-    creatingApcaTable: true,
+    creatingApcaTable: false,
     colour: {
       sRgb: { r: 255, g: 255, b: 255 },
       dispP3: { r: 1, g: 1, b: 1 },
@@ -440,7 +440,7 @@ function App() {
         </div>
         <RadioButton
           aria-labelledby={stepId}
-          buttontype="tonal"
+          buttontype="filled"
           className={cx('radio-button', 'swatch-step__radio-button')}
           radioItems={radioItemsRef.current}
           value={`${state.swatchStep}`}
