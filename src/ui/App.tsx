@@ -26,6 +26,7 @@ import NumberField from './components/NumberField/NumberField';
 import Radio from './components/Radio/Radio';
 import RadioButton from './components/RadioButton/RadioButton';
 import Slider from './components/Slider/Slider';
+import Svg from './components/Svg/Svg';
 import Switch from './components/Switch/Switch';
 import ToggleButton from './components/ToggleButton/ToggleButton';
 import WebGl from './components/WebGl/WebGl';
@@ -385,7 +386,15 @@ function App() {
             className={cx('lc__gamut')}
             documentColorSpace={documentColorSpace}
             peakLightness={state.peakLightness}
-            peakChroma={state.peakLightness}
+            peakChroma={state.peakChroma}
+            hues={state.hues}
+            resolutionMultiplier={2}
+          />
+          <Svg
+            className={cx('lc__svg')}
+            documentColorSpace={documentColorSpace}
+            peakLightness={state.peakLightness}
+            peakChroma={state.peakChroma}
             hues={state.hues}
           />
           <XYSlider

@@ -507,6 +507,13 @@ body {
     border-radius: 0.25rem;
   }
 
+  &__svg {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    margin: 0.625rem 0.75rem;
+    border-radius: 0.25rem;
+  }
+
   &__xy-slider {
     grid-row: 1 / -1;
     grid-column: 1 / -1;

@@ -14,6 +14,7 @@ type WebGlProps = {
   peakChroma: number;
   hues: Hues;
   className?: string;
+  resolutionMultiplier?: number;
 };
 
 const WebGl = ({
@@ -22,6 +23,7 @@ const WebGl = ({
   peakChroma,
   hues,
   className = '',
+  resolutionMultiplier = 1,
   ...props
 }: WebGlProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -127,9 +129,10 @@ const WebGl = ({
 
     // 캔버스 리사이즈 함수 정의
     const resizeCanvas = () => {
+      const multiplier = resolutionMultiplier || 1;
       const { width, height } = container.getBoundingClientRect();
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = width * multiplier;
+      canvas.height = height * multiplier;
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
       render();
     };
