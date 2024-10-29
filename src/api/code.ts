@@ -161,11 +161,11 @@ const createPalette = (palette: Palette) => {
     }
     const hexText = figma.createText();
     infoFrame.appendChild(hexText);
-    let sRgbHexText;
-    if (colorSpace === 'DISPLAY_P3') {
-      sRgbHexText = figma.createText();
-      infoFrame.appendChild(sRgbHexText);
-    }
+    // let sRgbHexText;
+    // if (colorSpace === 'DISPLAY_P3') {
+    //   sRgbHexText = figma.createText();
+    //   infoFrame.appendChild(sRgbHexText);
+    // }
     const gamutText = figma.createText();
     infoFrame.appendChild(gamutText);
     infoFrame.children.forEach((child) => {
@@ -209,16 +209,19 @@ ${formatDigits(aSwatch.dispP3.g, 1, 6)}
 ${formatDigits(aSwatch.dispP3.b, 1, 6)}
 )`;
     }
+    // // hexText
+    // hexText.name = `${colorSpace === 'DISPLAY_P3' ? 'displayP3' : 'sRGB'}-hex`;
+    // hexText.characters = `#${
+    //   colorSpace === 'DISPLAY_P3' ? aSwatch.dispP3Hex : aSwatch.sRgbHex
+    // }`;
     // hexText
-    hexText.name = `${colorSpace === 'DISPLAY_P3' ? 'displayP3' : 'sRGB'}-hex`;
-    hexText.characters = `#${
-      colorSpace === 'DISPLAY_P3' ? aSwatch.dispP3Hex : aSwatch.sRgbHex
-    }`;
-    // sRgbHexText
-    if (sRgbHexText) {
-      sRgbHexText.name = 'sRGB-hex';
-      sRgbHexText.characters = `#${aSwatch.sRgbHex}`;
-    }
+    hexText.name = 'sRGB-hex';
+    hexText.characters = `#${aSwatch.sRgbHex}`;
+    // // sRgbHexText
+    // if (sRgbHexText) {
+    //   sRgbHexText.name = 'sRGB-hex';
+    //   sRgbHexText.characters = `#${aSwatch.sRgbHex}`;
+    // }
     // gamutText
     gamutText.name = 'gamut';
     gamutText.characters = aSwatch.gamut;

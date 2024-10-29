@@ -46,74 +46,66 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const vividsLightnessRef = useRef<ThemeLightness>({
     name: {
-      light: 0.41,
-      dark: 0.94,
+      light: 0.51,
+      dark: 0.89,
     },
     onName: {
-      light: 0.98,
-      dark: 0.28,
+      light: 1,
+      dark: 0.18,
+    },
+    onNameVariant: {
+      light: 0.91,
+      dark: 0.45,
     },
     nameContainer: {
-      light: 0.93,
-      dark: 0.43,
+      light: 0.91,
+      dark: 0.48,
     },
     onNameContainer: {
-      light: 0.42,
-      dark: 0.92,
-    },
-    nameFixed: {
-      light: 0.91,
-      dark: 0.91,
-    },
-    onNameFixed: {
       light: 0.26,
-      dark: 0.26,
+      dark: 0.98,
     },
-    nameFixedDim: {
-      light: 0.83,
-      dark: 0.83,
-    },
-    onNameFixedVariant: {
-      light: 0.39,
-      dark: 0.39,
+    onNameContainerVariant: {
+      light: 0.48,
+      dark: 0.89,
     },
     inverseName: {
-      light: 0.87,
-      dark: 0.51,
+      light: 0.47,
+      dark: 0.89,
     },
     onInverseName: {
-      light: 0.3,
-      dark: 0.96,
+      light: 0.98,
+      dark: 0.18,
     },
   });
   const neutralsLightnessRef = useRef<ThemeLightness>({
-    surface: {
-      light: 0.98,
-      dark: 0.33,
+    surfaceContainerLowest: {
+      light: 1,
+      dark: 0.29,
     },
-    onSurface: {
-      light: 0.39,
-      dark: 0.95,
+    surface: {
+      light: 0.99,
+      dark: 0.31,
+    },
+    surfaceContainerLow: {
+      light: 0.97,
+      dark: 0.34,
+    },
+    surfaceContainer: {
+      light: 0.95,
+      dark: 0.38,
+    },
+    surfaceContainerHigh: {
+      light: 0.93,
+      dark: 0.43,
     },
     surfaceContainerHighest: {
       light: 0.91,
       dark: 0.48,
     },
-    surfaceContainerHigh: {
-      light: 0.92,
-      dark: 0.45,
-    },
-    surfaceContainer: {
-      light: 0.94,
-      dark: 0.41,
-    },
-    surfaceContainerLow: {
-      light: 0.96,
-      dark: 0.37,
-    },
-    surfaceContainerLowest: {
-      light: 1,
-      dark: 0.29,
+    onSurface: {
+      light: 0.26,
+      dark: 0.99,
     },
     inverseSurface: {
       light: 0.3,
@@ -123,35 +115,6 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
       light: 0.94,
       dark: 0.37,
     },
-    surfaceTint: {
-      light: 0.41,
-      dark: 0.94,
-    },
-
-    bg: {
-      light: 1,
-      dark: 0.29,
-    },
-    onBg: {
-      light: 0.25,
-      dark: 0.99,
-    },
-    surfaceBright: {
-      light: 0.98,
-      dark: 0.53,
-    },
-    surfaceDim: {
-      light: 0.88,
-      dark: 0.33,
-    },
-    scrim: {
-      light: 0,
-      dark: 0,
-    },
-    shadow: {
-      light: 0,
-      dark: 0,
-    },
   });
   const neutralVariantsLightnessRef = useRef<ThemeLightness>({
     surfaceVariant: {
@@ -159,16 +122,16 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({
       dark: 0.48,
     },
     onSurfaceVariant: {
-      light: 0.52,
-      dark: 0.87,
+      light: 0.44,
+      dark: 0.92,
     },
     outline: {
-      light: 0.62,
-      dark: 0.8,
+      light: 0.6,
+      dark: 0.82,
     },
     outlineVariant: {
-      light: 0.81,
-      dark: 0.61,
+      light: 0.82,
+      dark: 0.6,
     },
   });
 
