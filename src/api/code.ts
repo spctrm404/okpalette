@@ -161,11 +161,11 @@ const createPalette = (palette: Palette) => {
     }
     const hexText = figma.createText();
     infoFrame.appendChild(hexText);
-    // let sRgbHexText;
-    // if (colorSpace === 'DISPLAY_P3') {
-    //   sRgbHexText = figma.createText();
-    //   infoFrame.appendChild(sRgbHexText);
-    // }
+    let dispP3HexText;
+    if (colorSpace === 'DISPLAY_P3') {
+      dispP3HexText = figma.createText();
+      infoFrame.appendChild(dispP3HexText);
+    }
     const gamutText = figma.createText();
     infoFrame.appendChild(gamutText);
     infoFrame.children.forEach((child) => {
@@ -209,22 +209,34 @@ ${formatDigits(aSwatch.dispP3.g, 1, 6)}
 ${formatDigits(aSwatch.dispP3.b, 1, 6)}
 )`;
     }
-    // // hexText
-    // hexText.name = `${colorSpace === 'DISPLAY_P3' ? 'displayP3' : 'sRGB'}-hex`;
-    // hexText.characters = `#${
-    //   colorSpace === 'DISPLAY_P3' ? aSwatch.dispP3Hex : aSwatch.sRgbHex
-    // }`;
     // hexText
     hexText.name = 'sRGB-hex';
     hexText.characters = `#${aSwatch.sRgbHex}`;
-    // // sRgbHexText
-    // if (sRgbHexText) {
-    //   sRgbHexText.name = 'sRGB-hex';
-    //   sRgbHexText.characters = `#${aSwatch.sRgbHex}`;
-    // }
-    // gamutText
+    // dispP3HexText
+    if (dispP3HexText) {
+      dispP3HexText.name = 'displayP3-hex';
+      dispP3HexText.characters = `#${aSwatch.dispP3Hex}`;
+      dispP3HexText.visible = false;
+    }
+    // gamut
     gamutText.name = 'gamut';
-    gamutText.characters = aSwatch.gamut;
+    let gamut;
+    if (colorSpace === 'DISPLAY_P3') {
+      if (aSwatch.gamut === 'sRGB') {
+        gamut = aSwatch.gamut;
+      } else if (aSwatch.gamut === 'Display P3') {
+        gamut = aSwatch.gamut;
+      } else {
+        gamut = 'Display P3 (Clamped)';
+      }
+    } else {
+      if (aSwatch.gamut === 'sRGB') {
+        gamut = aSwatch.gamut;
+      } else {
+        gamut = 'sRGB (Clamped)';
+      }
+    }
+    gamutText.characters = gamut;
   });
   return paletteFrame;
 };

@@ -187,7 +187,7 @@ export const createPalette = ({
         sRgbOklch,
         sRgb,
         sRgbHex,
-        gamut: isSRgb ? 'sRGB' : 'Display P3',
+        gamut: isSRgb ? 'sRGB' : isDispP3 ? 'Display P3' : 'Out of Display P3',
       });
     }
   }
