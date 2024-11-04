@@ -208,8 +208,12 @@ export const calculateApcaScore = (
     colorspace == 'DISPLAY_P3'
       ? displayP3toY([bgR, bgG, bgB])
       : sRGBtoY([bgR, bgG, bgB]);
-  const contrast = APCAcontrast(fgY, bgY);
-  return Math.round(Number(contrast));
+  const contrast = Number(APCAcontrast(fgY, bgY));
+  if (contrast < 0) {
+    return -1 * Math.round(-1 * contrast);
+  } else {
+    return Math.round(contrast);
+  }
 };
 
 export const createApcaMatrix = (
