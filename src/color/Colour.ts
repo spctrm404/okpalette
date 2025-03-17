@@ -8,7 +8,7 @@ import {
 import { applyGamma, removeGamma } from "./gamma";
 import { labTolch, lchToLab } from "./lch";
 
-class Colour {
+export class Colour {
   lab: Vector3 = [0, 0, 0];
   lch: Vector3 = [0, 0, 0];
   linearSrgb: Vector3 = [0, 0, 0];

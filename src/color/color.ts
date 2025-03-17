@@ -20,7 +20,3 @@ export const linearDisplayP3ToOklab = (rgb: Vector3): Vector3 => {
   const xyz = linearDisplayP3ToXYZ(rgb);
   return XYZToOkLab(xyz);
 };
-
-export const inGamut = ([r, g, b]: Vector3): boolean => {
-  return Math.min(r, g, b) >= 0 && Math.max(r, g, b) <= 1;
-};
