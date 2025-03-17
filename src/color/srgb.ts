@@ -14,9 +14,9 @@ const XYZ_TO_RGB_MATRIX:Matrix3 = [
 	[  0.05563007969699366, -0.20397695888897652,  1.0569715142428786  ],
 ];
 
-export const linearSRgbToXYZ = (rgb: Vector3): Vector3 => {
+export const linearSrgbToXYZ = (rgb: Vector3): Vector3 => {
   return multiplyMatrix3Vector3(rgb, RGB_TO_XYZ_MATRIX);
 };
-export const XYZToLinearSRgb = (rgb: Vector3): Vector3 => {
+export const XYZToLinearSrgb = (rgb: Vector3): Vector3 => {
   return multiplyMatrix3Vector3(rgb, XYZ_TO_RGB_MATRIX);
 };

@@ -15,3 +15,5 @@ export type OKCoefficients = [
     coefficients: [number, number, number, number, number];
   },
 ];
+
+export type ColorSpace = "srgb" | "display-p3";
