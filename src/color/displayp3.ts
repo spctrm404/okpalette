@@ -1,5 +1,5 @@
 import type { Vector3, Matrix3 } from "../types";
-import { multiplyMatrix3Vector3 } from "../util";
+import { multiplyVector3Matrix3 } from "../util";
 
 // prettier-ignore
 const RGB_TO_XYZ_MATRIX:Matrix3 = [
@@ -15,8 +15,8 @@ const XYZ_TO_RGB_MATRIX:Matrix3 = [
 ];
 
 export const linearDisplayP3ToXYZ = (rgb: Vector3): Vector3 => {
-  return multiplyMatrix3Vector3(rgb, RGB_TO_XYZ_MATRIX);
+  return multiplyVector3Matrix3(rgb, RGB_TO_XYZ_MATRIX);
 };
 export const XYZToLinearDisplayP3 = (rgb: Vector3): Vector3 => {
-  return multiplyMatrix3Vector3(rgb, XYZ_TO_RGB_MATRIX);
+  return multiplyVector3Matrix3(rgb, XYZ_TO_RGB_MATRIX);
 };

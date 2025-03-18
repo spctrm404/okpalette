@@ -1,5 +1,5 @@
 import type { Vector3, Matrix3 } from "../types";
-import { multiplyMatrix3Vector3 } from "../util";
+import { multiplyVector3Matrix3 } from "../util";
 
 // prettier-ignore
 const OKLAB_TO_LMS_MATRIX:Matrix3 = [
@@ -27,16 +27,16 @@ const LMS_TO_OKLAB_MATRIX:Matrix3 = [
 ];
 
 const oklabToLMS = (lab: Vector3): Vector3 => {
-  return multiplyMatrix3Vector3(lab, OKLAB_TO_LMS_MATRIX);
+  return multiplyVector3Matrix3(lab, OKLAB_TO_LMS_MATRIX);
 };
 export const oklabToXYZ = (lab: Vector3): Vector3 => {
   const lms = oklabToLMS(lab);
   const linearLms = [lms[0] ** 3, lms[1] ** 3, lms[2] ** 3] as Vector3;
-  return multiplyMatrix3Vector3(linearLms, LMS_TO_XYZ_MATRIX);
+  return multiplyVector3Matrix3(linearLms, LMS_TO_XYZ_MATRIX);
 };
 
 const XYZToLinearLMS = (xyz: Vector3): Vector3 => {
-  return multiplyMatrix3Vector3(xyz, XYZ_TO_LMS_MATRIX);
+  return multiplyVector3Matrix3(xyz, XYZ_TO_LMS_MATRIX);
 };
 export const XYZToOkLab = (xyz: Vector3): Vector3 => {
   const linearLms = XYZToLinearLMS(xyz);
@@ -45,5 +45,5 @@ export const XYZToOkLab = (xyz: Vector3): Vector3 => {
     Math.cbrt(linearLms[1]),
     Math.cbrt(linearLms[2]),
   ] as Vector3;
-  return multiplyMatrix3Vector3(lms, LMS_TO_OKLAB_MATRIX);
+  return multiplyVector3Matrix3(lms, LMS_TO_OKLAB_MATRIX);
 };
