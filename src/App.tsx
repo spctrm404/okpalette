@@ -1,10 +1,10 @@
 import "./App.css";
-import { Colour } from "./color/Colour";
+import { Colour } from "./Colour/Colour";
 
 function App() {
   const a = new Colour({ srgb: [1, 0, 0] });
   console.log(a);
-  const b = new Colour({ lch: [0.5, 0.14, 240] });
+  const b = new Colour({ oklch: [0.5, 0.14, 240] });
   console.log(b);
   return (
     <>
@@ -12,14 +12,14 @@ function App() {
         style={{
           width: "100px",
           height: "100px",
-          background: `${a.getRgbString("srgb")}`,
+          background: `${a.toString("srgb")}`,
         }}
       ></div>
       <div
         style={{
           width: "100px",
           height: "100px",
-          background: `${b.getRgbString("srgb")}`,
+          background: `${b.toString("srgb")}`,
         }}
       ></div>
     </>

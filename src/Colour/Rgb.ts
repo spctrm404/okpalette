@@ -47,7 +47,12 @@ export abstract class Rgb {
     }) as Vector3;
   }
 
+  isInGamut(): boolean {
+    const [r, g, b] = this._linearRgb;
+    return Math.min(r, g, b) >= 0 && Math.max(r, g, b) <= 1;
+  }
+
   abstract toXyzFromLinearRgb(): Vector3;
-  abstract toLinearRgbFromXyz(xyz: Vector3): Vector3;
-  abstract toString(): string;
+
+  abstract toString(base?: "rgb" | "linearRgb"): string;
 }

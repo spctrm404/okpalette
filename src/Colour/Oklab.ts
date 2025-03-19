@@ -70,26 +70,31 @@ export class Oklab {
     ];
   }
 
-  toLms(): Vector3 {
+  toLmsFromOklab(): Vector3 {
     return multiplyVector3Matrix3(this._lab, Oklab.TO_LMS_FROM_OKLAB_MATRIX);
   }
-  toXyz(): Vector3 {
-    const lms = this.toLms();
+  toXyzFromOklab(): Vector3 {
+    const lms = this.toLmsFromOklab();
     const linearLms = [lms[0] ** 3, lms[1] ** 3, lms[2] ** 3] as Vector3;
     return multiplyVector3Matrix3(linearLms, Oklab.TO_XYZ_FROM_LMS_MATRIX);
   }
 
-  static toLinearLmsFromXyz(xyz: Vector3): Vector3 {
+  static getLinearLmsFromXyz(xyz: Vector3): Vector3 {
     return multiplyVector3Matrix3(xyz, Oklab.TO_LMS_FROM_XYZ_MATRIX);
   }
 
-  static toOklabFromXyz = (xyz: Vector3): Vector3 => {
-    const linearLms = Oklab.toLinearLmsFromXyz(xyz);
+  static getOklabFromXyz(xyz: Vector3): Vector3 {
+    const linearLms = Oklab.getLinearLmsFromXyz(xyz);
     const lms = [
       Math.cbrt(linearLms[0]),
       Math.cbrt(linearLms[1]),
       Math.cbrt(linearLms[2]),
     ] as Vector3;
     return multiplyVector3Matrix3(lms, Oklab.TO_OKLAB_FROM_LMS_MATRIX);
-  };
+  }
+
+  toString(base: "lab" | "lch") {
+    const [x, y, z] = base === "lab" ? this._lab : this._lch;
+    return `color(${base === "lab" ? "oklab" : "oklch"} ${x} ${y} ${z})`;
+  }
 }

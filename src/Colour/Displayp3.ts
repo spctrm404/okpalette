@@ -26,7 +26,7 @@ export class DisplayP3 extends Rgb {
       DisplayP3.TO_XYZ_FROM_RGB_MATRIX,
     );
   }
-  toLinearRgbFromXyz(xyz: Vector3): Vector3 {
+  static getLinearRgbFromXyz(xyz: Vector3): Vector3 {
     return multiplyVector3Matrix3(xyz, DisplayP3.TO_RGB_FROM_XYZ_MATRIX);
   }
 

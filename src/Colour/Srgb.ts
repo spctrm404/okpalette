@@ -23,12 +23,12 @@ export class Srgb extends Rgb {
   toXyzFromLinearRgb(): Vector3 {
     return multiplyVector3Matrix3(this._linearRgb, Srgb.TO_XYZ_FROM_RGB_MATRIX);
   }
-  toLinearRgbFromXyz(xyz: Vector3): Vector3 {
+  static getLinearRgbFromXyz(xyz: Vector3): Vector3 {
     return multiplyVector3Matrix3(xyz, Srgb.TO_RGB_FROM_XYZ_MATRIX);
   }
 
-  toString(): string {
-    const [r, g, b] = this._rgb;
-    return `color(srgb ${r} ${g} ${b})`;
+  toString(base: "rgb" | "linearRgb"): string {
+    const [r, g, b] = base === "rgb" ? this._rgb : this._linearRgb;
+    return `color(${base === "rgb" ? "srgb" : "srgb-linear"} ${r} ${g} ${b})`;
   }
 }
