@@ -20,14 +20,18 @@ export class DisplayP3 extends Rgb {
     super(input);
   }
 
-  static toLinearRgbFromXyz(xyz: Vector3): Vector3 {
-    return multiplyVector3Matrix3(xyz, DisplayP3.TO_RGB_FROM_XYZ_MATRIX);
-  }
-  toXyzFromLinearRgb(): Vector3 {
+  toXyz(): Vector3 {
     return multiplyVector3Matrix3(
       this._linearRgb,
       DisplayP3.TO_XYZ_FROM_RGB_MATRIX,
     );
+  }
+  static toXyzFromLinearRgb(linearRgb: Vector3): Vector3 {
+    return multiplyVector3Matrix3(linearRgb, DisplayP3.TO_XYZ_FROM_RGB_MATRIX);
+  }
+
+  static toLinearRgbFromXyz(xyz: Vector3): Vector3 {
+    return multiplyVector3Matrix3(xyz, DisplayP3.TO_RGB_FROM_XYZ_MATRIX);
   }
 
   toString(): string {

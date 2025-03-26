@@ -16,4 +16,10 @@ export type OKCoefficients = [
   },
 ];
 
-export type ColorSpace = "srgb" | "display-p3";
+export type CssColorSpaces =
+  | "oklab"
+  | "oklch"
+  | "srgb"
+  | "srgb-linear"
+  | "display-p3";
+export type Gamut = Extract<CssColorSpaces, "srgb" | "display-p3">;

@@ -33,10 +33,10 @@ export class Oklab {
   constructor(input: { lab?: Vector3; lch?: Vector3 }) {
     if (input.lab) {
       this._lab = input.lab;
-      this._lch = this.toLchFromLab();
+      this._lch = this.toLch();
     } else if (input.lch) {
       this._lch = input.lch;
-      this._lab = this.toLabFromLch();
+      this._lab = this.toLab();
     }
   }
 
@@ -49,19 +49,25 @@ export class Oklab {
 
   set lab(lab: Vector3) {
     this._lab = lab;
-    this._lch = this.toLchFromLab();
+    this._lch = this.toLch();
   }
   set lch(lch: Vector3) {
     this._lch = lch;
-    this._lab = this.toLabFromLch();
+    this._lab = this.toLab();
   }
 
-  toLchFromLab(): Vector3 {
+  toLch(): Vector3 {
     const [l, a, b] = this._lab;
     const h = (Math.atan2(b, a) * 180.0) / Math.PI;
     return [l, Math.sqrt(a ** 2 + b ** 2), h >= 0 ? h : h + 360.0];
   }
-  toLabFromLch(): Vector3 {
+  static toLchFromLab(lab: Vector3): Vector3 {
+    const [l, a, b] = lab;
+    const h = (Math.atan2(b, a) * 180.0) / Math.PI;
+    return [l, Math.sqrt(a ** 2 + b ** 2), h >= 0 ? h : h + 360.0];
+  }
+
+  toLab(): Vector3 {
     const [l, c, h] = this._lch;
     return [
       l,
@@ -69,21 +75,37 @@ export class Oklab {
       c * Math.sin((h * Math.PI) / 180.0),
     ];
   }
+  static toLabFromLch(lch: Vector3): Vector3 {
+    const [l, c, h] = lch;
+    return [
+      l,
+      c * Math.cos((h * Math.PI) / 180.0),
+      c * Math.sin((h * Math.PI) / 180.0),
+    ];
+  }
 
-  private toLmsFromOklab(): Vector3 {
+  private toLms(): Vector3 {
     return multiplyVector3Matrix3(this._lab, Oklab.TO_LMS_FROM_OKLAB_MATRIX);
   }
-  toXyzFromOklab(): Vector3 {
-    const lms = this.toLmsFromOklab();
+  toXyz(): Vector3 {
+    const lms = this.toLms();
+    const linearLms = [lms[0] ** 3, lms[1] ** 3, lms[2] ** 3] as Vector3;
+    return multiplyVector3Matrix3(linearLms, Oklab.TO_XYZ_FROM_LMS_MATRIX);
+  }
+  private static toLmsFromOklab(lab: Vector3): Vector3 {
+    return multiplyVector3Matrix3(lab, Oklab.TO_LMS_FROM_OKLAB_MATRIX);
+  }
+  static toXyzFromOklab(lab: Vector3): Vector3 {
+    const lms = Oklab.toLmsFromOklab(lab);
     const linearLms = [lms[0] ** 3, lms[1] ** 3, lms[2] ** 3] as Vector3;
     return multiplyVector3Matrix3(linearLms, Oklab.TO_XYZ_FROM_LMS_MATRIX);
   }
 
-  private static getLinearLmsFromXyz(xyz: Vector3): Vector3 {
+  private static toLinearLmsFromXyz(xyz: Vector3): Vector3 {
     return multiplyVector3Matrix3(xyz, Oklab.TO_LMS_FROM_XYZ_MATRIX);
   }
-  static getOklabFromXyz(xyz: Vector3): Vector3 {
-    const linearLms = Oklab.getLinearLmsFromXyz(xyz);
+  static toOklabFromXyz(xyz: Vector3): Vector3 {
+    const linearLms = Oklab.toLinearLmsFromXyz(xyz);
     const lms = [
       Math.cbrt(linearLms[0]),
       Math.cbrt(linearLms[1]),

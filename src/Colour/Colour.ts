@@ -1,7 +1,7 @@
 import { Oklab } from "./Oklab";
 import { Srgb } from "./Srgb";
 import { DisplayP3 } from "./Displayp3";
-import { Vector3 } from "../types";
+import { CssColorSpaces, Gamut, Vector3 } from "../types";
 
 export class Colour {
   private _oklab!: Oklab;
@@ -22,22 +22,22 @@ export class Colour {
 
     if (oklab) {
       this._oklab = new Oklab({ lab: oklab });
-      xyz = this._oklab.toXyzFromOklab();
+      xyz = this._oklab.toXyz();
     } else if (oklch) {
       this._oklab = new Oklab({ lch: oklch });
-      xyz = this._oklab.toXyzFromOklab();
+      xyz = this._oklab.toXyz();
     } else if (srgb) {
       this._srgb = new Srgb({ rgb: srgb });
-      xyz = this._srgb.toXyzFromLinearRgb();
+      xyz = this._srgb.toXyz();
     } else if (linearSrgb) {
       this._srgb = new Srgb({ linearRgb: linearSrgb });
-      xyz = this._srgb.toXyzFromLinearRgb();
+      xyz = this._srgb.toXyz();
     } else if (displayP3) {
       this._displayP3 = new DisplayP3({ rgb: displayP3 });
-      xyz = this._displayP3.toXyzFromLinearRgb();
+      xyz = this._displayP3.toXyz();
     } else if (linearDisplayP3) {
       this._displayP3 = new DisplayP3({ linearRgb: linearDisplayP3 });
-      xyz = this._displayP3.toXyzFromLinearRgb();
+      xyz = this._displayP3.toXyz();
     }
 
     if (xyz) this.init(xyz);
@@ -45,7 +45,7 @@ export class Colour {
 
   init(xyz: Vector3) {
     if (!this._oklab) {
-      const oklab = Oklab.getOklabFromXyz(xyz);
+      const oklab = Oklab.toOklabFromXyz(xyz);
       this._oklab = new Oklab({ lab: oklab });
     }
     if (!this._srgb) {
@@ -67,7 +67,7 @@ export class Colour {
     },
   ) {
     if (options.oklab) {
-      const oklabValue = Oklab.getOklabFromXyz(xyz);
+      const oklabValue = Oklab.toOklabFromXyz(xyz);
       this._oklab.lab = oklabValue;
     }
     if (options.srgb) {
@@ -82,32 +82,32 @@ export class Colour {
 
   setOklab(lab: Vector3) {
     this._oklab.lab = lab;
-    const xyz = this._oklab.toXyzFromOklab();
+    const xyz = this._oklab.toXyz();
     this.update(xyz, { oklab: false });
   }
   setOklch(lch: Vector3) {
     this._oklab.lch = lch;
-    const xyz = this._oklab.toXyzFromOklab();
+    const xyz = this._oklab.toXyz();
     this.update(xyz, { oklab: false });
   }
   setLinearSrgb(linearRgb: Vector3) {
     this._srgb.linearRgb = linearRgb;
-    const xyz = this._srgb.toXyzFromLinearRgb();
+    const xyz = this._srgb.toXyz();
     this.update(xyz, { srgb: false });
   }
   setSrgb(rgb: Vector3) {
     this._srgb.rgb = rgb;
-    const xyz = this._srgb.toXyzFromLinearRgb();
+    const xyz = this._srgb.toXyz();
     this.update(xyz, { srgb: false });
   }
   setLinearDisplayP3(linearRgb: Vector3) {
     this._displayP3.linearRgb = linearRgb;
-    const xyz = this._displayP3.toXyzFromLinearRgb();
+    const xyz = this._displayP3.toXyz();
     this.update(xyz, { displayP3: false });
   }
   setDisplayP3(rgb: Vector3) {
     this._displayP3.rgb = rgb;
-    const xyz = this._displayP3.toXyzFromLinearRgb();
+    const xyz = this._displayP3.toXyz();
     this.update(xyz, { displayP3: false });
   }
 
@@ -130,15 +130,13 @@ export class Colour {
     return this._displayP3.rgb;
   }
 
-  isInGamut(gamut: "srgb" | "display-p3"): boolean {
+  isInGamut(gamut: Gamut): boolean {
     return gamut === "srgb"
       ? this._srgb.isInGamut()
       : this._displayP3.isInGamut();
   }
 
-  toString(
-    colorSpace: "oklab" | "oklch" | "srgb" | "srgb-linear" | "display-p3",
-  ) {
+  toString(colorSpace: CssColorSpaces = "srgb"): string {
     switch (colorSpace) {
       case "oklab":
         return this._oklab.toString("lab");
@@ -151,5 +149,25 @@ export class Colour {
       case "display-p3":
         return this._displayP3.toString();
     }
+  }
+
+  static findMaxChromaForLH(
+    l: number,
+    h: number,
+    options: { gamut: Gamut; epsilon: number } = {
+      gamut: "display-p3",
+      epsilon: 10e-6,
+    },
+  ) {
+    const { gamut, epsilon } = options;
+    const low = 0;
+    const high = 0.4;
+    const lchAsVal = [l, high, h] as Vector3;
+    const labAsVal = Oklab.toLabFromLch(lchAsVal);
+    const xyz = Oklab.toXyzFromOklab(labAsVal);
+    const rgb =
+      gamut === "srgb"
+        ? Srgb.toLinearRgbFromXyz(xyz)
+        : DisplayP3.toLinearRgbFromXyz(xyz);
   }
 }
