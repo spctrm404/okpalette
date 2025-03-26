@@ -70,7 +70,7 @@ export class Oklab {
     ];
   }
 
-  toLmsFromOklab(): Vector3 {
+  private toLmsFromOklab(): Vector3 {
     return multiplyVector3Matrix3(this._lab, Oklab.TO_LMS_FROM_OKLAB_MATRIX);
   }
   toXyzFromOklab(): Vector3 {
@@ -79,10 +79,9 @@ export class Oklab {
     return multiplyVector3Matrix3(linearLms, Oklab.TO_XYZ_FROM_LMS_MATRIX);
   }
 
-  static getLinearLmsFromXyz(xyz: Vector3): Vector3 {
+  private static getLinearLmsFromXyz(xyz: Vector3): Vector3 {
     return multiplyVector3Matrix3(xyz, Oklab.TO_LMS_FROM_XYZ_MATRIX);
   }
-
   static getOklabFromXyz(xyz: Vector3): Vector3 {
     const linearLms = Oklab.getLinearLmsFromXyz(xyz);
     const lms = [

@@ -52,6 +52,7 @@ export abstract class Rgb {
     return Math.min(r, g, b) >= 0 && Math.max(r, g, b) <= 1;
   }
 
+  // abstract static toLinearRgbFromXyz(xyz: Vector3): Vector3;
   abstract toXyzFromLinearRgb(): Vector3;
 
   abstract toString(base?: "rgb" | "linearRgb"): string;

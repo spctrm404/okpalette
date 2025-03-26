@@ -20,11 +20,11 @@ export class Srgb extends Rgb {
     super(input);
   }
 
+  static toLinearRgbFromXyz(xyz: Vector3): Vector3 {
+    return multiplyVector3Matrix3(xyz, Srgb.TO_RGB_FROM_XYZ_MATRIX);
+  }
   toXyzFromLinearRgb(): Vector3 {
     return multiplyVector3Matrix3(this._linearRgb, Srgb.TO_XYZ_FROM_RGB_MATRIX);
-  }
-  static getLinearRgbFromXyz(xyz: Vector3): Vector3 {
-    return multiplyVector3Matrix3(xyz, Srgb.TO_RGB_FROM_XYZ_MATRIX);
   }
 
   toString(base: "rgb" | "linearRgb"): string {
