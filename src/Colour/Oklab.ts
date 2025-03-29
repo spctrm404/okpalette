@@ -40,18 +40,18 @@ export class Oklab {
     }
   }
 
-  get lab(): Vector3 {
+  getLab(): Vector3 {
     return this._lab;
   }
-  get lch(): Vector3 {
+  getLch(): Vector3 {
     return this._lch;
   }
 
-  set lab(lab: Vector3) {
+  setLab(lab: Vector3) {
     this._lab = lab;
     this._lch = this.toLch();
   }
-  set lch(lch: Vector3) {
+  setLch(lch: Vector3) {
     this._lch = lch;
     this._lab = this.toLab();
   }
@@ -89,7 +89,7 @@ export class Oklab {
   }
   toXyz(): Vector3 {
     const lms = this.toLms();
-    const linearLms = [lms[0] ** 3, lms[1] ** 3, lms[2] ** 3] as Vector3;
+    const linearLms = lms.map((val) => val ** 3) as Vector3;
     return multiplyVector3Matrix3(linearLms, Oklab.TO_XYZ_FROM_LMS_MATRIX);
   }
   private static toLmsFromOklab(lab: Vector3): Vector3 {
@@ -97,7 +97,7 @@ export class Oklab {
   }
   static toXyzFromOklab(lab: Vector3): Vector3 {
     const lms = Oklab.toLmsFromOklab(lab);
-    const linearLms = [lms[0] ** 3, lms[1] ** 3, lms[2] ** 3] as Vector3;
+    const linearLms: Vector3 = lms.map((val) => val ** 3) as Vector3;
     return multiplyVector3Matrix3(linearLms, Oklab.TO_XYZ_FROM_LMS_MATRIX);
   }
 
@@ -106,16 +106,12 @@ export class Oklab {
   }
   static toOklabFromXyz(xyz: Vector3): Vector3 {
     const linearLms = Oklab.toLinearLmsFromXyz(xyz);
-    const lms = [
-      Math.cbrt(linearLms[0]),
-      Math.cbrt(linearLms[1]),
-      Math.cbrt(linearLms[2]),
-    ] as Vector3;
+    const lms = linearLms.map((val) => Math.cbrt(val)) as Vector3;
     return multiplyVector3Matrix3(lms, Oklab.TO_OKLAB_FROM_LMS_MATRIX);
   }
 
   toString(base: "lab" | "lch") {
     const [x, y, z] = base === "lab" ? this._lab : this._lch;
-    return `color(${base === "lab" ? "oklab" : "oklch"} ${x} ${y} ${z})`;
+    return `${base === "lab" ? "oklab" : "oklch"}(${100 * x}% ${y} ${z})`;
   }
 }

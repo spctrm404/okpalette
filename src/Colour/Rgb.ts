@@ -14,18 +14,18 @@ export abstract class Rgb {
     }
   }
 
-  get linearRgb(): Vector3 {
+  getLinearRgb(): Vector3 {
     return this._linearRgb;
   }
-  get rgb(): Vector3 {
+  getRgb(): Vector3 {
     return this._rgb;
   }
 
-  set linearRgb(linearRgb: Vector3) {
+  setLinearRgb(linearRgb: Vector3) {
     this._linearRgb = linearRgb;
     this._rgb = this.toNonLinear();
   }
-  set rgb(rgb: Vector3) {
+  setRgb(rgb: Vector3) {
     this._rgb = rgb;
     this._linearRgb = this.toLinear();
   }
